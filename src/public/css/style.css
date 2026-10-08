@@ -66,7 +66,7 @@ body {
 
 /* Sidebar - Solidly Fixed Left Pane */
 .app-sidebar {
-  width: 220px;
+  width: 235px;
   height: 100vh;
   background-color: var(--bg-sidebar);
   color: #94a3b8;
@@ -84,63 +84,63 @@ body {
 }
 
 .sidebar-header {
-  padding: 0.65rem 0.85rem;
+  padding: 0.85rem 1.1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
 }
 
 .brand-logo {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   background: var(--primary-gradient);
-  border-radius: 7px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 800;
-  font-size: 1.05rem;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+  font-size: 1.15rem;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
 }
 
 .brand-title {
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.3px;
 }
 
 .sidebar-section-title {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #64748b;
-  padding: 0.5rem 0.75rem 0.2rem;
+  padding: 0.75rem 1rem 0.3rem;
   font-weight: 700;
 }
 
 .sidebar-nav {
   list-style: none;
-  padding: 0 0.4rem;
+  padding: 0 0.5rem;
   flex-grow: 1;
 }
 
 .sidebar-item {
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.2rem;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.38rem 0.65rem;
+  gap: 0.6rem;
+  padding: 0.45rem 0.75rem;
   color: #cbd5e1;
   text-decoration: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 7px;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -159,8 +159,8 @@ body {
 }
 
 .sidebar-link i {
-  font-size: 0.95rem;
-  width: 18px;
+  font-size: 1.05rem;
+  width: 20px;
   text-align: center;
 }
 
@@ -178,13 +178,13 @@ body {
 
 /* Header Navbar - Fixed Top Bar */
 .app-header {
-  height: 46px;
-  min-height: 46px;
+  height: 52px;
+  min-height: 52px;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
-  padding: 0 1rem;
+  padding: 0 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -199,8 +199,8 @@ body {
 
 .search-container input {
   width: 100%;
-  padding: 0.35rem 0.75rem 0.35rem 2.2rem;
-  font-size: 0.825rem;
+  padding: 0.4rem 0.85rem 0.4rem 2.3rem;
+  font-size: 0.85rem;
   border: 1px solid var(--border-color);
   border-radius: 20px;
   background-color: var(--bg-main);
@@ -217,22 +217,22 @@ body {
 
 .search-container i {
   position: absolute;
-  left: 0.75rem;
+  left: 0.85rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
 }
 
 .user-badge {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .avatar-circle {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: #fff;
@@ -240,13 +240,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.825rem;
+  font-size: 0.875rem;
   box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
 }
 
 .role-tag {
-  font-size: 0.65rem;
-  padding: 0.15rem 0.5rem;
+  font-size: 0.68rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 20px;
   font-weight: 700;
   text-transform: uppercase;
@@ -257,9 +257,9 @@ body {
 .role-manager { background-color: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
 .role-salesexecutive { background-color: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
 
-/* Middle Content Body - Scrollable Area */
+/* Middle Content Body - Spacious Scrollable Workspace */
 .app-content {
-  padding: 0.75rem 1.15rem 0.5rem 1.15rem;
+  padding: 1.25rem 1.5rem;
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
@@ -302,10 +302,10 @@ body {
 
 /* Sleek Compact Footer - Fixed Bottom Bar */
 .app-footer {
-  height: 28px;
-  min-height: 28px;
-  padding: 0 1rem;
-  font-size: 0.72rem;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 1.25rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   background-color: #ffffff;
   border-top: 1px solid var(--border-color);
@@ -322,7 +322,7 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   box-shadow: var(--card-shadow);
-  margin-bottom: 0.6rem;
+  margin-bottom: 1.25rem;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -331,7 +331,7 @@ body {
 }
 
 .crm-card-header {
-  padding: 0.45rem 0.75rem;
+  padding: 0.75rem 1.15rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -339,22 +339,22 @@ body {
 }
 
 .crm-card-title {
-  font-size: 0.825rem;
+  font-size: 0.925rem;
   font-weight: 700;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
   letter-spacing: -0.2px;
 }
 
 .crm-card-body {
-  padding: 0.6rem 0.75rem;
+  padding: 1rem 1.15rem;
 }
 
 /* KPI Cards */
 .kpi-card {
-  padding: 0.5rem 0.75rem;
+  padding: 1rem 1.15rem;
   border-radius: var(--border-radius);
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
@@ -380,41 +380,41 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(90deg, #3b82f6, #10b981);
 }
 
 .kpi-label {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-secondary);
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.25rem;
 }
 
 .kpi-value {
-  font-size: 1.25rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: -0.5px;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .kpi-sub {
-  font-size: 0.65rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
-  margin-top: 0.15rem;
+  margin-top: 0.3rem;
 }
 
 .kpi-icon-box {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.05rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
 }
 
@@ -426,13 +426,13 @@ body {
 
 /* Status Badges */
 .badge-status {
-  padding: 0.15rem 0.45rem;
+  padding: 0.2rem 0.55rem;
   border-radius: 20px;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
 .status-active, .status-won, .status-qualified, .status-completed {
@@ -481,21 +481,25 @@ body {
 .crm-table th {
   background-color: #f8fafc;
   color: #475569;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.45rem 0.65rem;
+  padding: 0.65rem 0.85rem;
   border-bottom: 1px solid var(--border-color);
   text-align: left;
 }
 
 .crm-table td {
-  padding: 0.45rem 0.65rem;
-  font-size: 0.78rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.825rem;
   color: var(--text-primary);
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
+}
+
+.crm-table tbody tr:hover td {
+  background-color: #f8fafc;
 }
 
 .crm-table tbody tr:hover td {

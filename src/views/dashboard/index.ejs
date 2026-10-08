@@ -1,10 +1,10 @@
 <div class="container-fluid px-0">
   
   <!-- Dashboard Header & Actions -->
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2 gap-2">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
       <div class="d-flex align-items-center gap-2">
-        <h5 class="fw-bold mb-0 text-dark">
+        <h4 class="fw-bold mb-0 text-dark">
           <% if (user.roleName === 'Admin') { %>
             <i class="bi bi-shield-check text-danger me-1"></i>Administration & Governance Console
           <% } else if (user.roleName === 'Manager') { %>
@@ -12,45 +12,45 @@
           <% } else { %>
             <i class="bi bi-speedometer2 text-success me-1"></i>Sales Executive Action Center
           <% } %>
-        </h5>
+        </h4>
         <span class="role-tag role-<%= user.roleName.toLowerCase() %>"><%= user.roleName %></span>
       </div>
     </div>
-    <div class="d-flex align-items-center gap-1">
-      <a href="/leads/create" class="btn btn-xs btn-crm-primary py-1 px-2 text-xs">
-        <i class="bi bi-plus-lg"></i> Lead
+    <div class="d-flex align-items-center gap-2">
+      <a href="/leads/create" class="btn btn-sm btn-crm-primary">
+        <i class="bi bi-plus-lg"></i> New Lead
       </a>
-      <a href="/opportunities/create" class="btn btn-xs btn-crm-outline py-1 px-2 text-xs">
-        <i class="bi bi-currency-dollar"></i> Opportunity
+      <a href="/opportunities/create" class="btn btn-sm btn-crm-outline">
+        <i class="bi bi-currency-dollar"></i> New Opportunity
       </a>
-      <a href="/followups/create" class="btn btn-xs btn-crm-outline py-1 px-2 text-xs">
-        <i class="bi bi-calendar-plus"></i> Follow-Up
+      <a href="/followups/create" class="btn btn-sm btn-crm-outline">
+        <i class="bi bi-calendar-plus"></i> Schedule Follow-Up
       </a>
     </div>
   </div>
 
   <!-- Overdue Follow-Up Alert Banner if any -->
   <% if (kpis.overdueFollowUps > 0) { %>
-    <div class="alert alert-warning py-1 px-2 border-warning d-flex align-items-center justify-content-between mb-2 text-xs" role="alert">
+    <div class="alert alert-warning py-2 px-3 border-warning d-flex align-items-center justify-content-between mb-4 shadow-sm" role="alert">
       <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-exclamation-octagon-fill text-warning fs-6"></i>
-        <span><strong><%= kpis.overdueFollowUps %> Overdue Follow-Up(s)</strong> require action.</span>
+        <i class="bi bi-exclamation-octagon-fill text-warning fs-5"></i>
+        <span><strong><%= kpis.overdueFollowUps %> Overdue Follow-Up(s)</strong> require immediate action.</span>
       </div>
-      <a href="/followups?timeFilter=overdue" class="btn btn-xs btn-warning text-dark fw-bold text-xs py-0 px-2">
-        Review (<%= kpis.overdueFollowUps %>)
+      <a href="/followups?timeFilter=overdue" class="btn btn-sm btn-warning text-dark fw-bold py-1 px-3">
+        Review Pending (<%= kpis.overdueFollowUps %>)
       </a>
     </div>
   <% } %>
 
   <!-- Row 1: Core Primary KPI Cards -->
-  <div class="row g-2 mb-2">
+  <div class="row g-3 mb-4">
     <!-- Total Customers -->
     <div class="col-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Accounts' : 'Customers' %></div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Assigned Accounts' : 'Total Customers' %></div>
           <div class="kpi-value"><%= kpis.totalCustomers %></div>
-          <div class="kpi-sub"><i class="bi bi-shield-check text-success me-1"></i>Active</div>
+          <div class="kpi-sub"><i class="bi bi-shield-check text-success me-1"></i>Active Enterprise Accounts</div>
         </div>
         <div class="kpi-icon-box icon-blue">
           <i class="bi bi-buildings-fill"></i>
@@ -63,8 +63,8 @@
       <div class="kpi-card">
         <div>
           <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Open Leads' : 'Inbound Leads' %></div>
-          <div class="kpi-value"><%= kpis.openLeads %> <span class="fs-6 text-muted">/ <%= kpis.totalLeads %></span></div>
-          <div class="kpi-sub"><strong class="text-primary"><%= kpis.convertedLeads %></strong> converted</div>
+          <div class="kpi-value"><%= kpis.openLeads %> <span class="fs-6 text-muted fw-normal">/ <%= kpis.totalLeads %></span></div>
+          <div class="kpi-sub"><strong class="text-primary"><%= kpis.convertedLeads %></strong> converted to pipeline</div>
         </div>
         <div class="kpi-icon-box icon-purple">
           <i class="bi bi-funnel-fill"></i>
@@ -76,7 +76,7 @@
     <div class="col-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Pipeline' : 'Active Pipeline' %></div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Pipeline Value' : 'Active Pipeline Value' %></div>
           <div class="kpi-value">$<%= Number(kpis.totalPipelineValue).toLocaleString() %></div>
           <div class="kpi-sub">Weighted: <strong class="text-success">$<%= Number(kpis.weightedPipelineValue).toLocaleString(undefined, {maximumFractionDigits: 0}) %></strong></div>
         </div>
@@ -90,9 +90,9 @@
     <div class="col-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Won Deals' : 'Won Revenue' %></div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Closed Won' : 'Won Revenue' %></div>
           <div class="kpi-value text-success">$<%= Number(kpis.wonRevenue).toLocaleString() %></div>
-          <div class="kpi-sub"><i class="bi bi-trophy-fill text-warning me-1"></i><%= kpis.wonOpportunities %> won</div>
+          <div class="kpi-sub"><i class="bi bi-trophy-fill text-warning me-1"></i><%= kpis.wonOpportunities %> deals won</div>
         </div>
         <div class="kpi-icon-box icon-green">
           <i class="bi bi-award-fill"></i>
@@ -101,48 +101,48 @@
     </div>
   </div>
 
-  <!-- Row 2: 2-Column High-Density Workspace Grid -->
-  <div class="row g-2">
+  <!-- Row 2: 2-Column Spacious Workspace Grid -->
+  <div class="row g-4">
     
     <!-- LEFT COLUMN: Role-Tailored Intelligence + Pipeline Chart -->
     <div class="col-lg-7">
       
       <!-- 1. Role-Tailored Intelligence Module -->
       <% if (user.roleName === 'Admin' && typeof adminStats !== 'undefined' && adminStats) { %>
-        <div class="crm-card mb-2 border-start border-3 border-danger">
-          <div class="crm-card-header py-1 px-2">
-            <span class="crm-card-title text-danger text-xs">
-              <i class="bi bi-shield-lock-fill me-1"></i> System Governance & Health
+        <div class="crm-card mb-4 border-start border-4 border-danger">
+          <div class="crm-card-header">
+            <span class="crm-card-title text-danger">
+              <i class="bi bi-shield-lock-fill me-1"></i> System Governance & Audit Overview
             </span>
-            <div class="d-flex gap-1">
-              <a href="/users" class="btn btn-xs btn-outline-danger py-0 px-2 text-xs">Users</a>
-              <a href="/audit" class="btn btn-xs btn-outline-secondary py-0 px-2 text-xs">Audit</a>
+            <div class="d-flex gap-2">
+              <a href="/users" class="btn btn-sm btn-outline-danger py-1 px-3 text-xs">Manage Users</a>
+              <a href="/audit" class="btn btn-sm btn-outline-secondary py-1 px-3 text-xs">Audit Logs</a>
             </div>
           </div>
-          <div class="crm-card-body p-2">
-            <div class="row g-2 text-center">
+          <div class="crm-card-body">
+            <div class="row g-3 text-center">
               <div class="col-3">
-                <div class="p-1 bg-light rounded border">
-                  <div class="text-xs text-muted text-uppercase" style="font-size: 0.65rem;">Users</div>
-                  <div class="fw-bold text-dark text-sm"><%= adminStats.totalUsers %></div>
+                <div class="p-3 bg-light rounded-3 border">
+                  <div class="text-xs text-muted text-uppercase fw-bold mb-1">Total Users</div>
+                  <div class="fs-4 fw-bold text-dark"><%= adminStats.totalUsers %></div>
                 </div>
               </div>
               <div class="col-3">
-                <div class="p-1 bg-light rounded border">
-                  <div class="text-xs text-muted text-uppercase" style="font-size: 0.65rem;">Locked</div>
-                  <div class="fw-bold text-sm <%= adminStats.lockedAccounts > 0 ? 'text-danger' : 'text-success' %>"><%= adminStats.lockedAccounts %></div>
+                <div class="p-3 bg-light rounded-3 border">
+                  <div class="text-xs text-muted text-uppercase fw-bold mb-1">Locked Accounts</div>
+                  <div class="fs-4 fw-bold <%= adminStats.lockedAccounts > 0 ? 'text-danger' : 'text-success' %>"><%= adminStats.lockedAccounts %></div>
                 </div>
               </div>
               <div class="col-3">
-                <div class="p-1 bg-light rounded border">
-                  <div class="text-xs text-muted text-uppercase" style="font-size: 0.65rem;">Entities</div>
-                  <div class="fw-bold text-primary text-sm"><%= adminStats.totalEntities %></div>
+                <div class="p-3 bg-light rounded-3 border">
+                  <div class="text-xs text-muted text-uppercase fw-bold mb-1">Live Entities</div>
+                  <div class="fs-4 fw-bold text-primary"><%= adminStats.totalEntities %></div>
                 </div>
               </div>
               <div class="col-3">
-                <div class="p-1 bg-light rounded border">
-                  <div class="text-xs text-muted text-uppercase" style="font-size: 0.65rem;">Audit Logs</div>
-                  <div class="fw-bold text-secondary text-sm"><%= adminStats.auditCount %></div>
+                <div class="p-3 bg-light rounded-3 border">
+                  <div class="text-xs text-muted text-uppercase fw-bold mb-1">Audit Trail</div>
+                  <div class="fs-4 fw-bold text-secondary"><%= adminStats.auditCount %></div>
                 </div>
               </div>
             </div>
@@ -150,28 +150,28 @@
         </div>
 
       <% } else if (user.roleName === 'Manager' && typeof managerStats !== 'undefined' && managerStats) { %>
-        <div class="crm-card mb-2 border-start border-3 border-primary">
-          <div class="crm-card-header py-1 px-2">
-            <span class="crm-card-title text-primary text-xs">
-              <i class="bi bi-trophy-fill me-1"></i> Sales Executive Leaderboard
+        <div class="crm-card mb-4 border-start border-4 border-primary">
+          <div class="crm-card-header">
+            <span class="crm-card-title text-primary">
+              <i class="bi bi-trophy-fill me-1"></i> Sales Executive Performance Leaderboard
             </span>
-            <a href="/reports/sales" class="btn btn-xs btn-outline-primary py-0 px-2 text-xs">Report &rarr;</a>
+            <a href="/reports/sales" class="btn btn-sm btn-outline-primary py-1 px-3 text-xs">Full Sales Report &rarr;</a>
           </div>
           <div class="crm-card-body p-0">
             <div class="table-responsive">
-              <table class="crm-table text-xs">
+              <table class="crm-table">
                 <thead>
                   <tr>
                     <th>Rank</th>
                     <th>Representative</th>
-                    <th>Won</th>
-                    <th>Revenue</th>
-                    <th>Pipeline</th>
+                    <th>Deals Won</th>
+                    <th>Total Revenue</th>
+                    <th>Active Pipeline</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% if (managerStats.leaderboard && managerStats.leaderboard.length > 0) { %>
-                    <% managerStats.leaderboard.slice(0, 2).forEach((rep, idx) => { %>
+                    <% managerStats.leaderboard.slice(0, 4).forEach((rep, idx) => { %>
                       <tr>
                         <td><span class="badge <%= idx === 0 ? 'bg-warning text-dark' : 'bg-light text-dark border' %>">#<%= idx + 1 %></span></td>
                         <td class="fw-semibold"><%= rep.Name %></td>
@@ -181,7 +181,7 @@
                       </tr>
                     <% }) %>
                   <% } else { %>
-                    <tr><td colspan="5" class="text-center text-muted py-1">No closed deals logged.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted py-3">No closed sales deals logged yet.</td></tr>
                   <% } %>
                 </tbody>
               </table>
@@ -190,45 +190,45 @@
         </div>
 
       <% } else if (user.roleName === 'SalesExecutive' && typeof salesStats !== 'undefined' && salesStats) { %>
-        <div class="crm-card mb-2 border-start border-3 border-info">
-          <div class="crm-card-header py-1 px-2">
-            <span class="crm-card-title text-info text-xs">
-              <i class="bi bi-fire text-danger me-1"></i> LeadScore 360™ & DealIQ™ Insights
+        <div class="crm-card mb-4 border-start border-4 border-info">
+          <div class="crm-card-header">
+            <span class="crm-card-title text-info">
+              <i class="bi bi-fire text-danger me-1"></i> LeadScore 360™ & DealIQ™ Intelligence
             </span>
-            <a href="/leads" class="btn btn-xs btn-outline-secondary py-0 px-2 text-xs">All Leads</a>
+            <a href="/leads" class="btn btn-sm btn-outline-secondary py-1 px-3 text-xs">All Leads</a>
           </div>
-          <div class="crm-card-body p-1">
-            <div class="row g-1">
+          <div class="crm-card-body">
+            <div class="row g-3">
               <div class="col-6">
-                <div class="text-xs fw-bold text-uppercase text-muted mb-1" style="font-size: 0.65rem;">Hot Leads</div>
+                <div class="text-xs fw-bold text-uppercase text-muted mb-2">🔥 Hot Inbound Leads</div>
                 <% if (salesStats.hotLeads && salesStats.hotLeads.length > 0) { %>
-                  <% salesStats.hotLeads.slice(0, 2).forEach(l => { %>
-                    <div class="d-flex justify-content-between align-items-center p-1 border rounded bg-light mb-1 text-xs">
+                  <% salesStats.hotLeads.slice(0, 3).forEach(l => { %>
+                    <div class="d-flex justify-content-between align-items-center p-2 border rounded-3 bg-light mb-2">
                       <div>
-                        <a href="/leads/<%= l.LeadId %>" class="fw-semibold text-primary text-decoration-none"><%= l.LeadName %></a>
-                        <span class="<%= l.LeadScore.badgeClass %> px-1 text-xs"><%= l.LeadScore.score %></span>
+                        <a href="/leads/<%= l.LeadId %>" class="fw-semibold text-primary text-decoration-none d-block"><%= l.LeadName %></a>
+                        <span class="<%= l.LeadScore.badgeClass %> px-2 py-0 text-xs">Score: <%= l.LeadScore.score %>/100</span>
                       </div>
-                      <span class="fw-bold">$<%= Number(l.ExpectedValue).toLocaleString() %></span>
+                      <span class="fw-bold text-dark">$<%= Number(l.ExpectedValue).toLocaleString() %></span>
                     </div>
                   <% }) %>
                 <% } else { %>
-                  <div class="text-xs text-muted py-1">No hot leads right now.</div>
+                  <div class="text-xs text-muted py-2">No hot leads logged currently.</div>
                 <% } %>
               </div>
               <div class="col-6">
-                <div class="text-xs fw-bold text-uppercase text-muted mb-1" style="font-size: 0.65rem;">Active Deal Health</div>
+                <div class="text-xs fw-bold text-uppercase text-muted mb-2">⚡ Active Deal Health Radar</div>
                 <% if (salesStats.activeOpps && salesStats.activeOpps.length > 0) { %>
-                  <% salesStats.activeOpps.slice(0, 2).forEach(o => { %>
-                    <div class="d-flex justify-content-between align-items-center p-1 border rounded bg-light mb-1 text-xs">
+                  <% salesStats.activeOpps.slice(0, 3).forEach(o => { %>
+                    <div class="d-flex justify-content-between align-items-center p-2 border rounded-3 bg-light mb-2">
                       <div>
-                        <a href="/opportunities/<%= o.OpportunityId %>" class="fw-semibold text-primary text-decoration-none"><%= o.OpportunityName %></a>
-                        <span class="<%= o.DealIQ.badgeClass %> px-1 text-xs"><%= o.DealIQ.healthScore %>%</span>
+                        <a href="/opportunities/<%= o.OpportunityId %>" class="fw-semibold text-primary text-decoration-none d-block"><%= o.OpportunityName %></a>
+                        <span class="<%= o.DealIQ.badgeClass %> px-2 py-0 text-xs">Health: <%= o.DealIQ.healthScore %>%</span>
                       </div>
-                      <span class="fw-bold">$<%= Number(o.Amount).toLocaleString() %></span>
+                      <span class="fw-bold text-dark">$<%= Number(o.Amount).toLocaleString() %></span>
                     </div>
                   <% }) %>
                 <% } else { %>
-                  <div class="text-xs text-muted py-1">No active deals right now.</div>
+                  <div class="text-xs text-muted py-2">No active opportunities logged currently.</div>
                 <% } %>
               </div>
             </div>
@@ -237,12 +237,12 @@
       <% } %>
 
       <!-- 2. Opportunity Pipeline Bar Chart -->
-      <div class="crm-card mb-0">
-        <div class="crm-card-header py-1 px-2">
-          <span class="crm-card-title text-xs"><i class="bi bi-bar-chart-steps text-primary"></i> Pipeline Valuation by Stage</span>
-          <a href="/opportunities/kanban" class="btn btn-xs btn-outline-secondary py-0 px-2 text-xs">Kanban &rarr;</a>
+      <div class="crm-card mb-4">
+        <div class="crm-card-header">
+          <span class="crm-card-title"><i class="bi bi-bar-chart-steps text-primary"></i> Pipeline Valuation by Stage</span>
+          <a href="/opportunities/kanban" class="btn btn-sm btn-outline-secondary py-1 px-3 text-xs">Interactive Kanban Board &rarr;</a>
         </div>
-        <div class="crm-card-body p-2" style="height: 145px; position: relative;">
+        <div class="crm-card-body" style="height: 250px; position: relative;">
           <canvas id="pipelineChart"></canvas>
         </div>
       </div>
@@ -253,25 +253,25 @@
     <div class="col-lg-5">
       
       <!-- 1. Lead Funnel Doughnut -->
-      <div class="crm-card mb-2">
-        <div class="crm-card-header py-1 px-2">
-          <span class="crm-card-title text-xs"><i class="bi bi-pie-chart-fill text-info"></i> Inbound Lead Status</span>
-          <a href="/leads" class="btn btn-xs btn-outline-secondary py-0 px-2 text-xs">Leads</a>
+      <div class="crm-card mb-4">
+        <div class="crm-card-header">
+          <span class="crm-card-title"><i class="bi bi-pie-chart-fill text-info"></i> Inbound Lead Status Breakdown</span>
+          <a href="/leads" class="btn btn-sm btn-outline-secondary py-1 px-3 text-xs">View All Leads</a>
         </div>
-        <div class="crm-card-body p-2" style="height: 140px; position: relative;">
+        <div class="crm-card-body" style="height: 220px; position: relative;">
           <canvas id="leadStatusChart"></canvas>
         </div>
       </div>
 
       <!-- 2. Upcoming Follow-Ups & Action Items -->
-      <div class="crm-card mb-0">
-        <div class="crm-card-header py-1 px-2">
-          <span class="crm-card-title text-xs"><i class="bi bi-calendar-check text-primary"></i> Action Agenda</span>
-          <a href="/followups" class="btn btn-xs btn-outline-secondary py-0 px-2 text-xs">All</a>
+      <div class="crm-card mb-4">
+        <div class="crm-card-header">
+          <span class="crm-card-title"><i class="bi bi-calendar-check text-primary"></i> Action Agenda & Next Steps</span>
+          <a href="/followups" class="btn btn-sm btn-outline-secondary py-1 px-3 text-xs">View All Follow-Ups</a>
         </div>
         <div class="crm-card-body p-0">
           <div class="table-responsive">
-            <table class="crm-table text-xs">
+            <table class="crm-table">
               <thead>
                 <tr>
                   <th>Subject</th>
@@ -282,20 +282,20 @@
               </thead>
               <tbody>
                 <% if (typeof upcomingFollowUps !== 'undefined' && upcomingFollowUps && upcomingFollowUps.length > 0) { %>
-                  <% upcomingFollowUps.slice(0, 2).forEach(f => { %>
+                  <% upcomingFollowUps.slice(0, 4).forEach(f => { %>
                     <tr>
                       <td class="fw-semibold"><%= f.Subject %></td>
                       <td class="text-muted"><%= new Date(f.FollowUpDate).toLocaleDateString() %></td>
                       <td><%= f.CustomerName || f.LeadName || 'General' %></td>
                       <td>
-                        <button type="button" class="btn btn-xs btn-outline-success py-0 px-1 text-xs" onclick="completeFollowUp(<%= f.FollowUpId %>)">
-                          Done
+                        <button type="button" class="btn btn-sm btn-outline-success py-0 px-2 text-xs" onclick="completeFollowUp(<%= f.FollowUpId %>)">
+                          Complete
                         </button>
                       </td>
                     </tr>
                   <% }) %>
                 <% } else { %>
-                  <tr><td colspan="4" class="text-center text-muted py-2">No pending follow-ups scheduled.</td></tr>
+                  <tr><td colspan="4" class="text-center text-muted py-3">No pending follow-ups scheduled.</td></tr>
                 <% } %>
               </tbody>
             </table>
