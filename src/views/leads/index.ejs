@@ -77,6 +77,7 @@
               <th>Lead Name / Company</th>
               <th>Source</th>
               <th>Priority</th>
+              <th>LeadScore 360</th>
               <th>Status</th>
               <th>Est. Value</th>
               <th>Assigned Executive</th>
@@ -103,6 +104,16 @@
                     <span class="badge priority-<%= l.Priority.toLowerCase() %> px-2 py-1">
                       <%= l.Priority %>
                     </span>
+                  </td>
+                  <td>
+                    <% if (l.LeadScore) { %>
+                      <span class="<%= l.LeadScore.badgeClass %> px-2 py-1" style="font-size: 0.75rem;" title="Algorithmic Conversion Score: <%= l.LeadScore.score %>/100">
+                        <% if (l.LeadScore.grade === 'Hot') { %><i class="bi bi-fire me-1"></i><% } else if (l.LeadScore.grade === 'Warm') { %><i class="bi bi-lightning-fill me-1"></i><% } else { %><i class="bi bi-snow me-1"></i><% } %>
+                        <%= l.LeadScore.score %> (<%= l.LeadScore.grade %>)
+                      </span>
+                    <% } else { %>
+                      <span class="text-muted text-xs">N/A</span>
+                    <% } %>
                   </td>
                   <td>
                     <span class="badge-status status-<%= l.Status.toLowerCase() %>">

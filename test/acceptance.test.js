@@ -164,10 +164,10 @@ async function runTests() {
     assert.ok(convRes.customer.CustomerId);
     assert.ok(convRes.opportunity.OpportunityId);
 
-    // Clean up converted customer, opportunity, and lead
-    CustomerService.deleteCustomer(convRes.customer.CustomerId, { userId: 1, name: 'Admin', roleName: 'Admin' });
+    // Clean up converted opportunity, lead, and customer
     OpportunityService.deleteOpportunity(convRes.opportunity.OpportunityId, { userId: 1, name: 'Admin', roleName: 'Admin' });
     LeadService.deleteLead(res.lead.LeadId, { userId: 1, name: 'Admin', roleName: 'Admin' });
+    CustomerService.deleteCustomer(convRes.customer.CustomerId, { userId: 1, name: 'Admin', roleName: 'Admin' });
   });
 
   it('Opportunity creation and pipeline stage progression', () => {

@@ -3,20 +3,30 @@
   <!-- Dashboard Header & Actions -->
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-      <h3 class="fw-bold mb-1">Executive Dashboard</h3>
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <h3 class="fw-bold mb-0">
+          <% if (user.roleName === 'Admin') { %>
+            <i class="bi bi-shield-check text-danger me-2"></i>Executive Administration & Governance Console
+          <% } else if (user.roleName === 'Manager') { %>
+            <i class="bi bi-bar-chart-fill text-primary me-2"></i>Sales Leadership & Revenue Operations
+          <% } else { %>
+            <i class="bi bi-speedometer2 text-success me-2"></i>Sales Executive Action Center
+          <% } %>
+        </h3>
+      </div>
       <p class="text-muted mb-0">
-        Welcome back, <strong><%= user.name %></strong> &bull; Scoped as <span class="role-tag role-<%= user.roleName.toLowerCase() %>"><%= user.roleName %></span>
+        Logged in as <strong><%= user.name %></strong> &bull; Scoped as <span class="role-tag role-<%= user.roleName.toLowerCase() %>"><%= user.roleName %></span>
       </p>
     </div>
     <div class="d-flex align-items-center gap-2">
-      <a href="/leads/create" class="btn btn-crm-primary">
-        <i class="bi bi-plus-lg"></i> Capture Lead
+      <a href="/leads/create" class="btn btn-crm-primary shadow-sm">
+        <i class="bi bi-plus-lg me-1"></i> Capture Lead
       </a>
-      <a href="/opportunities/create" class="btn btn-crm-outline">
-        <i class="bi bi-currency-dollar"></i> New Opportunity
+      <a href="/opportunities/create" class="btn btn-crm-outline shadow-sm">
+        <i class="bi bi-currency-dollar me-1"></i> New Opportunity
       </a>
-      <a href="/followups/create" class="btn btn-crm-outline">
-        <i class="bi bi-calendar-plus"></i> Schedule Follow-Up
+      <a href="/followups/create" class="btn btn-crm-outline shadow-sm">
+        <i class="bi bi-calendar-plus me-1"></i> Schedule Follow-Up
       </a>
     </div>
   </div>
@@ -28,7 +38,7 @@
         <i class="bi bi-exclamation-octagon-fill fs-4 text-warning"></i>
         <div>
           <div class="fw-bold">Action Required: <%= kpis.overdueFollowUps %> Overdue Follow-Up(s)</div>
-          <div class="text-sm">You have scheduled activities that have passed their deadline. Please review or reschedule them.</div>
+          <div class="text-sm">You have scheduled activities that have passed their deadline. Please review or mark them completed.</div>
         </div>
       </div>
       <a href="/followups?timeFilter=overdue" class="btn btn-sm btn-warning text-dark fw-bold">
@@ -37,15 +47,15 @@
     </div>
   <% } %>
 
-  <!-- Row 1: KPI Cards -->
+  <!-- Row 1: Core Primary KPI Cards -->
   <div class="row g-3 mb-4">
     <!-- Total Customers -->
     <div class="col-sm-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label">Customers</div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Accounts' : 'Active Customers' %></div>
           <div class="kpi-value"><%= kpis.totalCustomers %></div>
-          <div class="kpi-sub"><i class="bi bi-shield-check text-success me-1"></i>Active accounts</div>
+          <div class="kpi-sub"><i class="bi bi-shield-check text-success me-1"></i>Enterprise accounts</div>
         </div>
         <div class="kpi-icon-box icon-blue">
           <i class="bi bi-buildings-fill"></i>
@@ -53,11 +63,11 @@
       </div>
     </div>
 
-    <!-- Total Leads -->
+    <!-- Open Leads -->
     <div class="col-sm-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label">Open Leads</div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Open Leads' : 'Inbound Funnel' %></div>
           <div class="kpi-value"><%= kpis.openLeads %> <span class="fs-6 text-muted">/ <%= kpis.totalLeads %></span></div>
           <div class="kpi-sub"><span class="text-primary fw-semibold"><%= kpis.convertedLeads %></span> converted</div>
         </div>
@@ -71,7 +81,7 @@
     <div class="col-sm-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label">Active Pipeline</div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Pipeline' : 'Active Pipeline' %></div>
           <div class="kpi-value">$<%= Number(kpis.totalPipelineValue).toLocaleString() %></div>
           <div class="kpi-sub">Weighted: <strong class="text-success">$<%= Number(kpis.weightedPipelineValue).toLocaleString(undefined, {maximumFractionDigits: 0}) %></strong></div>
         </div>
@@ -85,9 +95,9 @@
     <div class="col-sm-6 col-xl-3">
       <div class="kpi-card">
         <div>
-          <div class="kpi-label">Won Revenue</div>
+          <div class="kpi-label"><%= user.roleName === 'SalesExecutive' ? 'My Closed Won' : 'Won Revenue' %></div>
           <div class="kpi-value text-success">$<%= Number(kpis.wonRevenue).toLocaleString() %></div>
-          <div class="kpi-sub"><i class="bi bi-trophy-fill text-warning me-1"></i><%= kpis.wonOpportunities %> deals closed</div>
+          <div class="kpi-sub"><i class="bi bi-trophy-fill text-warning me-1"></i><%= kpis.wonOpportunities %> deals won</div>
         </div>
         <div class="kpi-icon-box icon-green">
           <i class="bi bi-award-fill"></i>
@@ -95,6 +105,244 @@
       </div>
     </div>
   </div>
+
+  <!-- ROLE-TAILORED INTELLIGENCE SECTION -->
+
+  <% if (user.roleName === 'Admin' && adminStats) { %>
+    <!-- ADMIN SPECIALIZED WIDGETS -->
+    <div class="crm-card mb-4 border-start border-4 border-danger">
+      <div class="crm-card-header d-flex justify-content-between align-items-center">
+        <span class="crm-card-title text-danger">
+          <i class="bi bi-shield-lock-fill me-1"></i> System Governance & Security Health
+        </span>
+        <div class="d-flex gap-2">
+          <a href="/users" class="btn btn-sm btn-outline-danger"><i class="bi bi-people me-1"></i> Manage Users</a>
+          <a href="/audit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-shield-check me-1"></i> Full Audit Trail</a>
+        </div>
+      </div>
+      <div class="crm-card-body">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 border text-center">
+              <div class="text-xs text-muted text-uppercase fw-bold">Total Users</div>
+              <div class="fs-4 fw-bold text-dark"><%= adminStats.totalUsers %></div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 border text-center">
+              <div class="text-xs text-muted text-uppercase fw-bold">Locked Accounts</div>
+              <div class="fs-4 fw-bold <%= adminStats.lockedAccounts > 0 ? 'text-danger' : 'text-success' %>">
+                <%= adminStats.lockedAccounts %>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 border text-center">
+              <div class="text-xs text-muted text-uppercase fw-bold">Total CRM Entities</div>
+              <div class="fs-4 fw-bold text-primary"><%= adminStats.totalEntities %></div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="p-3 bg-light rounded-3 border text-center">
+              <div class="text-xs text-muted text-uppercase fw-bold">Immutable Audit Logs</div>
+              <div class="fs-4 fw-bold text-secondary"><%= adminStats.auditCount %></div>
+            </div>
+          </div>
+        </div>
+
+        <% if (recentAuditLogs && recentAuditLogs.length > 0) { %>
+          <div class="mt-4">
+            <h6 class="fw-bold text-xs text-uppercase text-muted mb-2">Live Compliance & Mutation Feed</h6>
+            <div class="table-responsive">
+              <table class="crm-table text-sm">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>User</th>
+                    <th>IP Address</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% recentAuditLogs.forEach(log => { %>
+                    <tr>
+                      <td class="text-xs text-muted font-monospace"><%= new Date(log.CreatedDate).toLocaleTimeString() %></td>
+                      <td><span class="badge bg-secondary font-monospace"><%= log.Action %></span></td>
+                      <td class="fw-semibold"><%= log.EntityName %></td>
+                      <td><%= log.UserName %> (<%= log.UserRole %>)</td>
+                      <td class="text-xs font-monospace text-muted"><%= log.IpAddress %></td>
+                      <td class="text-secondary"><%= log.Details %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+  <% } else if (user.roleName === 'Manager' && managerStats) { %>
+    <!-- MANAGER SPECIALIZED WIDGETS -->
+    <div class="crm-card mb-4 border-start border-4 border-primary">
+      <div class="crm-card-header d-flex justify-content-between align-items-center">
+        <span class="crm-card-title text-primary">
+          <i class="bi bi-trophy-fill me-1"></i> Sales Executive Leaderboard & Performance
+        </span>
+        <a href="/reports/sales" class="btn btn-sm btn-outline-primary">Full Performance Report &rarr;</a>
+      </div>
+      <div class="crm-card-body p-0">
+        <div class="table-responsive">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Sales Representative</th>
+                <th>Deals Closed</th>
+                <th>Revenue Generated</th>
+                <th>Active Pipeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (managerStats.leaderboard && managerStats.leaderboard.length > 0) { %>
+                <% managerStats.leaderboard.forEach((rep, idx) => { %>
+                  <tr>
+                    <td>
+                      <span class="badge <%= idx === 0 ? 'bg-warning text-dark' : 'bg-light text-dark border' %> rounded-pill px-2">
+                        #<%= idx + 1 %>
+                      </span>
+                    </td>
+                    <td class="fw-semibold"><%= rep.Name %></td>
+                    <td><span class="badge bg-success font-monospace"><%= rep.DealsWon %> Deals</span></td>
+                    <td class="fw-bold text-success">$<%= Number(rep.TotalRevenue).toLocaleString() %></td>
+                    <td class="text-secondary font-monospace">$<%= Number(rep.ActivePipeline).toLocaleString() %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-3">No sales activity logged yet.</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  <% } else if (user.roleName === 'SalesExecutive' && salesStats) { %>
+    <!-- SALES EXECUTIVE SPECIALIZED WIDGETS -->
+    <div class="row g-4 mb-4">
+      
+      <!-- LeadScore 360 Inbound Radar -->
+      <div class="col-lg-6">
+        <div class="crm-card h-100 border-start border-4 border-info">
+          <div class="crm-card-header d-flex justify-content-between align-items-center">
+            <span class="crm-card-title text-info">
+              <i class="bi bi-fire me-1 text-danger"></i> LeadScore 360™ Prioritized Leads
+            </span>
+            <a href="/leads" class="btn btn-sm btn-outline-secondary">All Leads</a>
+          </div>
+          <div class="crm-card-body p-0">
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead>
+                  <tr>
+                    <th>Lead</th>
+                    <th>Score</th>
+                    <th>Est. Value</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (salesStats.hotLeads && salesStats.hotLeads.length > 0) { %>
+                    <% salesStats.hotLeads.slice(0, 4).forEach(l => { %>
+                      <tr>
+                        <td>
+                          <a href="/leads/<%= l.LeadId %>" class="fw-bold text-primary text-decoration-none">
+                            <%= l.LeadName %>
+                          </a>
+                          <div class="text-xs text-muted"><%= l.CompanyName || l.Source %></div>
+                        </td>
+                        <td>
+                          <span class="<%= l.LeadScore.badgeClass %> px-2 py-1" style="font-size: 0.75rem;">
+                            <%= l.LeadScore.score %> (<%= l.LeadScore.grade %>)
+                          </span>
+                        </td>
+                        <td class="fw-bold text-sm">$<%= Number(l.ExpectedValue).toLocaleString() %></td>
+                        <td>
+                          <a href="/leads/<%= l.LeadId %>" class="btn btn-sm btn-outline-primary py-0 px-2 text-xs">Convert</a>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="4" class="text-center text-muted py-3">No hot leads at this moment.</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DealIQ AI Health Tracker -->
+      <div class="col-lg-6">
+        <div class="crm-card h-100 border-start border-4 border-success">
+          <div class="crm-card-header d-flex justify-content-between align-items-center">
+            <span class="crm-card-title text-success">
+              <i class="bi bi-cpu-fill me-1 text-primary"></i> DealIQ™ AI Win Probability & Health
+            </span>
+            <a href="/opportunities" class="btn btn-sm btn-outline-secondary">Pipeline</a>
+          </div>
+          <div class="crm-card-body p-0">
+            <div class="table-responsive">
+              <table class="crm-table">
+                <thead>
+                  <tr>
+                    <th>Deal Name</th>
+                    <th>Amount</th>
+                    <th>Health</th>
+                    <th>AI Guidance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (salesStats.activeOpps && salesStats.activeOpps.length > 0) { %>
+                    <% salesStats.activeOpps.slice(0, 4).forEach(o => { %>
+                      <tr>
+                        <td>
+                          <a href="/opportunities/<%= o.OpportunityId %>" class="fw-semibold text-primary text-decoration-none">
+                            <%= o.OpportunityName %>
+                          </a>
+                          <div class="text-xs text-muted"><%= o.Stage %> &bull; <%= o.Probability %>%</div>
+                        </td>
+                        <td class="fw-bold text-sm">$<%= Number(o.Amount).toLocaleString() %></td>
+                        <td>
+                          <span class="<%= o.DealIQ.badgeClass %> px-2 py-1 text-xs">
+                            <%= o.DealIQ.healthScore %>% <%= o.DealIQ.label %>
+                          </span>
+                        </td>
+                        <td class="text-xs text-secondary" style="max-width: 180px;">
+                          <%= o.DealIQ.recommendation %>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="4" class="text-center text-muted py-3">No active opportunities found.</td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <% } %>
 
   <!-- Row 2: Visual Charts -->
   <div class="row g-4 mb-4">
@@ -143,7 +391,7 @@
     <div class="col-lg-6">
       <div class="crm-card mb-0">
         <div class="crm-card-header">
-          <span class="crm-card-title"><i class="bi bi-calendar-event text-primary"></i> Upcoming Follow-Ups</span>
+          <span class="crm-card-title"><i class="bi bi-calendar-event text-primary"></i> Upcoming Scheduled Follow-Ups</span>
           <a href="/followups" class="btn btn-sm btn-link text-decoration-none">View All</a>
         </div>
         <div class="crm-card-body p-0">

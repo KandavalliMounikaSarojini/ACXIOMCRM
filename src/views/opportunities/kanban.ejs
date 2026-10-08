@@ -35,7 +35,11 @@
             <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
-              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% if (o.DealIQ) { %>
+                <span class="<%= o.DealIQ.badgeClass %> px-2 py-0 text-xs"><%= o.DealIQ.healthScore %>%</span>
+              <% } else { %>
+                <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% } %>
             </div>
             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
               <span class="text-xs text-muted"><i class="bi bi-clock me-1"></i><%= o.ExpectedCloseDate %></span>
@@ -63,7 +67,11 @@
             <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
-              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% if (o.DealIQ) { %>
+                <span class="<%= o.DealIQ.badgeClass %> px-2 py-0 text-xs"><%= o.DealIQ.healthScore %>%</span>
+              <% } else { %>
+                <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% } %>
             </div>
             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
               <button class="btn btn-xs btn-outline-secondary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Qualification')">&larr;</button>
@@ -90,7 +98,11 @@
             <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
-              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% if (o.DealIQ) { %>
+                <span class="<%= o.DealIQ.badgeClass %> px-2 py-0 text-xs"><%= o.DealIQ.healthScore %>%</span>
+              <% } else { %>
+                <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+              <% } %>
             </div>
             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
               <button class="btn btn-xs btn-outline-secondary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Proposal')">&larr;</button>

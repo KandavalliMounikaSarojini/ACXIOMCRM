@@ -73,6 +73,7 @@
               <th>Probability (%)</th>
               <th>Weighted Pipeline ($)</th>
               <th>Stage</th>
+              <th>DealIQ Health</th>
               <th>Expected Close</th>
               <th>Assigned Owner</th>
               <th class="text-end">Actions</th>
@@ -114,6 +115,15 @@
                     <span class="badge-status status-<%= o.Stage.toLowerCase() %>">
                       <%= o.Stage %>
                     </span>
+                  </td>
+                  <td>
+                    <% if (o.DealIQ) { %>
+                      <span class="<%= o.DealIQ.badgeClass %> px-2 py-1" style="font-size: 0.75rem;" title="<%= o.DealIQ.recommendation %>">
+                        <%= o.DealIQ.healthScore %>% <%= o.DealIQ.label %>
+                      </span>
+                    <% } else { %>
+                      <span class="text-muted text-xs">N/A</span>
+                    <% } %>
                   </td>
                   <td class="text-sm text-muted">
                     <%= o.ExpectedCloseDate %>

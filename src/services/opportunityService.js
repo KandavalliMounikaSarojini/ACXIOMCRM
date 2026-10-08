@@ -155,7 +155,10 @@ class OpportunityService {
     query += ` ORDER BY ${safeSortCol} ${safeSortOrder} LIMIT ? OFFSET ?`;
     params.push(Number(limit), Number(offset));
 
-    const rows = db.prepare(query).all(...params);
+    const rows = db.prepare(query).all(...params).map(r => ({
+      ...r,
+      DealIQ: OpportunityService.calculateDealIQ(r)
+    }));
     const countResult = db.prepare(countQuery).get(...countParams);
 
     return {
@@ -164,6 +167,71 @@ class OpportunityService {
       page: Math.floor(offset / limit) + 1,
       limit
     };
+  }
+
+  /**
+   * Calculate DealIQ AI Health Score & Recommendation
+   */
+  static calculateDealIQ(opp) {
+    if (!opp) return { healthScore: 50, label: 'Standard', badgeClass: 'bg-secondary', recommendation: 'Monitor deal progress.' };
+    
+    if (opp.Stage === 'Won') {
+      return { healthScore: 100, label: 'Won', badgeClass: 'badge bg-success', recommendation: 'Deal closed successfully. Hand over to Customer Success.' };
+    }
+    if (opp.Stage === 'Lost') {
+      return { healthScore: 0, label: 'Lost', badgeClass: 'badge bg-danger', recommendation: 'Post-deal evaluation and nurture for next sales cycle.' };
+    }
+
+    let healthScore = 50;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const closeDate = new Date(opp.ExpectedCloseDate);
+    closeDate.setHours(0, 0, 0, 0);
+
+    // Overdue Check
+    if (closeDate < today) {
+      return {
+        healthScore: 25,
+        label: 'Overdue Risk',
+        badgeClass: 'badge bg-danger text-white',
+        recommendation: 'Close date is in the past. Re-engage executive sponsor & update forecast.'
+      };
+    }
+
+    // Stage momentum
+    if (opp.Stage === 'Negotiation') healthScore += 25;
+    else if (opp.Stage === 'Proposal') healthScore += 15;
+    else if (opp.Stage === 'Qualification') healthScore += 5;
+
+    // Probability weighting
+    if (opp.Probability >= 70) healthScore += 20;
+    else if (opp.Probability >= 40) healthScore += 10;
+    else healthScore -= 5;
+
+    healthScore = Math.min(Math.max(healthScore, 15), 98);
+
+    if (healthScore >= 75) {
+      return {
+        healthScore,
+        label: 'Strong Momentum',
+        badgeClass: 'badge bg-success text-white',
+        recommendation: 'High win probability. Finalize terms and schedule closing signature.'
+      };
+    } else if (healthScore >= 45) {
+      return {
+        healthScore,
+        label: 'Active Engagement',
+        badgeClass: 'badge bg-warning text-dark',
+        recommendation: 'Proposal stage active. Conduct product demo & address stakeholder questions.'
+      };
+    } else {
+      return {
+        healthScore,
+        label: 'Needs Attention',
+        badgeClass: 'badge bg-danger text-white',
+        recommendation: 'Low momentum detected. Re-qualify decision timeline and budget authority.'
+      };
+    }
   }
 
   /**
@@ -187,7 +255,12 @@ class OpportunityService {
       params.push(user.userId);
     }
 
-    return db.prepare(query).get(...params);
+    const opp = db.prepare(query).get(...params);
+    if (!opp) return null;
+    return {
+      ...opp,
+      DealIQ: OpportunityService.calculateDealIQ(opp)
+    };
   }
 
   /**

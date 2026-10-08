@@ -134,7 +134,10 @@ class LeadService {
     query += ` ORDER BY ${safeSortCol} ${safeSortOrder} LIMIT ? OFFSET ?`;
     params.push(Number(limit), Number(offset));
 
-    const rows = db.prepare(query).all(...params);
+    const rows = db.prepare(query).all(...params).map(r => ({
+      ...r,
+      LeadScore: LeadService.calculateLeadScore(r)
+    }));
     const countResult = db.prepare(countQuery).get(...countParams);
 
     return {
@@ -143,6 +146,51 @@ class LeadService {
       page: Math.floor(offset / limit) + 1,
       limit
     };
+  }
+
+  /**
+   * Calculate LeadScore 360 predictive scoring (0 - 100)
+   */
+  static calculateLeadScore(lead) {
+    if (!lead) return { score: 30, grade: 'Cold', badgeClass: 'bg-secondary' };
+    let score = 25;
+    
+    // Source weighting
+    if (lead.Source === 'Referral') score += 35;
+    else if (lead.Source === 'Website') score += 25;
+    else if (lead.Source === 'LinkedIn') score += 20;
+    else if (lead.Source === 'Cold Call' || lead.Source === 'Cold Outreach') score += 10;
+    else score += 15;
+
+    // Priority weighting
+    if (lead.Priority === 'Urgent') score += 30;
+    else if (lead.Priority === 'High') score += 20;
+    else if (lead.Priority === 'Medium') score += 10;
+    else score += 5;
+
+    // Expected value weighting
+    const val = Number(lead.ExpectedValue || 0);
+    if (val >= 50000) score += 20;
+    else if (val >= 15000) score += 12;
+    else if (val > 0) score += 5;
+
+    // Engagement status weighting
+    if (lead.Status === 'Qualified') score += 15;
+    else if (lead.Status === 'Contacted') score += 10;
+    else if (lead.Status === 'Lost' || lead.Status === 'Unqualified') score = Math.min(score, 20);
+
+    score = Math.min(Math.max(score, 10), 99);
+    let grade = 'Cold';
+    let badgeClass = 'badge bg-info text-dark';
+    if (score >= 75) {
+      grade = 'Hot';
+      badgeClass = 'badge bg-danger text-white';
+    } else if (score >= 45) {
+      grade = 'Warm';
+      badgeClass = 'badge bg-warning text-dark';
+    }
+
+    return { score, grade, badgeClass };
   }
 
   /**
@@ -166,7 +214,12 @@ class LeadService {
       params.push(user.userId);
     }
 
-    return db.prepare(query).get(...params);
+    const lead = db.prepare(query).get(...params);
+    if (!lead) return null;
+    return {
+      ...lead,
+      LeadScore: LeadService.calculateLeadScore(lead)
+    };
   }
 
   /**
