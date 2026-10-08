@@ -11,12 +11,6 @@
         "kind": "build",
         "isDefault": true
       }
-    },
-    {
-      "type": "npm",
-      "script": "test",
-      "problemMatcher": [],
-      "label": "Run Acceptance Tests"
     }
   ]
 }
