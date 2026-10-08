@@ -109,6 +109,16 @@
         </li>
       </ul>
       <% } %>
+
+      <div class="sidebar-section-title">DEVELOPER</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item">
+          <a href="/api-docs" class="sidebar-link <%= currentPath.startsWith('/api-docs') ? 'active' : '' %>" target="_blank">
+            <i class="bi bi-code-slash"></i>
+            <span>REST API Explorer</span>
+          </a>
+        </li>
+      </ul>
     </aside>
 
     <!-- Main Wrapper -->
@@ -147,6 +157,7 @@
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
               <li><h6 class="dropdown-header">Signed in as <%= currentUser.email %></h6></li>
               <li><a class="dropdown-item" href="/profile"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              <li><a class="dropdown-item" href="/api-docs" target="_blank"><i class="bi bi-code-slash me-2"></i>API Explorer (Swagger)</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item text-danger" href="/logout"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
             </ul>
@@ -176,16 +187,6 @@
 
         <%- body %>
       </main>
-
-      <!-- Sleek Compact Enterprise Status Bar -->
-      <footer class="app-footer">
-        <div>AcxiomCRM &copy; 2026 Enterprise Edition &bull; RBAC Level: <span class="fw-semibold text-dark"><%= currentUser.roleName %></span></div>
-        <div class="d-none d-md-flex align-items-center gap-3">
-          <span><i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem;"></i>API Gateway: <strong>Online</strong></span>
-          <span>LeadScore 360™ &amp; DealIQ™: <strong>Active</strong></span>
-          <a href="/api-docs" class="text-decoration-none text-muted"><i class="bi bi-code-slash me-1"></i>Swagger</a>
-        </div>
-      </footer>
     </div>
   </div>
 

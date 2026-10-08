@@ -300,22 +300,6 @@ body {
   border-radius: 4px;
 }
 
-/* Sleek Compact Footer - Fixed Bottom Bar */
-.app-footer {
-  height: 32px;
-  min-height: 32px;
-  padding: 0 1.25rem;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  background-color: #ffffff;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  z-index: 900;
-}
-
 /* Cards */
 .crm-card {
   background-color: var(--bg-surface);
