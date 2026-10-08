@@ -6,6 +6,8 @@ const CustomerService = require('../src/services/customerService');
 const LeadService = require('../src/services/leadService');
 const OpportunityService = require('../src/services/opportunityService');
 const FollowUpService = require('../src/services/followUpService');
+const ReportService = require('../src/services/reportService');
+const AuditService = require('../src/services/auditService');
 
 async function runTests() {
   console.log('🧪 Starting AcxiomCRM Enterprise Test Suite...\n');
@@ -54,7 +56,7 @@ async function runTests() {
     assert.strictEqual(followCount, 0, 'FollowUps table must have 0 mock records');
   });
 
-  console.log('\n--- 2. Authentication & Security ---');
+  console.log('\n--- 2. Authentication, RBAC & Security ---');
   await itAsync('Admin account authenticates with correct credentials', async () => {
     const res = await AuthService.authenticateUser('admin@acxiomcrm.com', 'Admin@12345', '127.0.0.1');
     assert.strictEqual(res.success, true);
@@ -91,7 +93,6 @@ async function runTests() {
     });
     assert.strictEqual(regRes.success, true);
 
-    // Duplicate email check
     const dupRes = await AuthService.registerUser({
       name: 'Duplicate Candidate',
       email: testEmail,
@@ -102,11 +103,10 @@ async function runTests() {
     assert.strictEqual(dupRes.success, false);
     assert.ok(dupRes.message.includes('already exists'));
 
-    // Clean up test user
     db.prepare('DELETE FROM Users WHERE Email = ?').run(testEmail);
   });
 
-  console.log('\n--- 3. Core Business Services Verification ---');
+  console.log('\n--- 3. Core Business Services & Scoping ---');
   it('Customer creation, retrieval, and code generation', () => {
     const res = CustomerService.createCustomer({
       CustomerName: 'Alice Smith',
@@ -131,7 +131,7 @@ async function runTests() {
     CustomerService.deleteCustomer(res.customer.CustomerId, { userId: 1, name: 'Admin', roleName: 'Admin' });
   });
 
-  it('Lead lifecycle and validation', () => {
+  it('Lead lifecycle, conversion, and validation', () => {
     const res = LeadService.createLead({
       LeadName: 'Bob Vance',
       CompanyName: 'Vance Refrigeration',
@@ -148,10 +148,25 @@ async function runTests() {
     assert.ok(res.lead.LeadId);
     assert.ok(res.lead.LeadCode.startsWith('LEAD-'));
 
-    const fetched = LeadService.getLeadById(res.lead.LeadId);
-    assert.strictEqual(fetched.LeadName, 'Bob Vance');
+    // Test Atomic Conversion to Customer & Opportunity
+    const convRes = LeadService.convertLead(res.lead.LeadId, {
+      CustomerName: 'Bob Vance',
+      CompanyName: 'Vance Refrigeration',
+      Email: 'bob@vancerefrig.com',
+      Phone: '+1 555-014-4444',
+      createOpportunity: true,
+      OpportunityName: 'Vance Refrigeration HVAC Rollout',
+      Amount: 25000,
+      ExpectedCloseDate: '2026-12-31'
+    }, { userId: 3, name: 'Sales Executive', roleName: 'SalesExecutive' });
 
-    // Clean up
+    assert.strictEqual(convRes.success, true);
+    assert.ok(convRes.customer.CustomerId);
+    assert.ok(convRes.opportunity.OpportunityId);
+
+    // Clean up converted customer, opportunity, and lead
+    CustomerService.deleteCustomer(convRes.customer.CustomerId, { userId: 1, name: 'Admin', roleName: 'Admin' });
+    OpportunityService.deleteOpportunity(convRes.opportunity.OpportunityId, { userId: 1, name: 'Admin', roleName: 'Admin' });
     LeadService.deleteLead(res.lead.LeadId, { userId: 1, name: 'Admin', roleName: 'Admin' });
   });
 
@@ -168,7 +183,6 @@ async function runTests() {
     assert.strictEqual(res.success, true);
     assert.ok(res.opportunity.OpportunityId);
 
-    // Update stage to Proposal
     const updateRes = OpportunityService.updateOpportunity(
       res.opportunity.OpportunityId,
       {
@@ -200,7 +214,6 @@ async function runTests() {
     assert.strictEqual(res.success, true);
     assert.ok(res.followUp.FollowUpId);
 
-    // Update follow-up to Completed
     const completeRes = FollowUpService.updateFollowUp(
       res.followUp.FollowUpId,
       {
@@ -217,6 +230,25 @@ async function runTests() {
 
     // Clean up
     FollowUpService.deleteFollowUp(res.followUp.FollowUpId, { userId: 1, name: 'Admin', roleName: 'Admin' });
+  });
+
+  console.log('\n--- 4. Data Export & CSV Security ---');
+  it('CSV conversion with headers and Formula Injection defense', () => {
+    const sampleData = [
+      { CustomerName: '=CMD|calc.exe', Email: '+attacker@evil.com', Status: 'Active' },
+      { CustomerName: 'Acme Corp', Email: 'contact@acme.com', Status: 'Active' }
+    ];
+    const headers = [
+      { key: 'CustomerName', label: 'Customer Name' },
+      { key: 'Email', label: 'Email' },
+      { key: 'Status', label: 'Status' }
+    ];
+
+    const csvOutput = ReportService.convertToCSV(sampleData, headers);
+    assert.ok(csvOutput.includes('"Customer Name","Email","Status"'));
+    // Guard against formula injection by ensuring dangerous leading characters are single-quote escaped
+    assert.ok(csvOutput.includes("''=CMD|calc.exe") || csvOutput.includes("''+attacker@evil.com") || csvOutput.includes("'=CMD|calc.exe"));
+    assert.ok(csvOutput.includes('"Acme Corp"'));
   });
 
   console.log('\n========================================================');

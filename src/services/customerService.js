@@ -361,7 +361,7 @@ class CustomerService {
     const oppCount = db.prepare('SELECT COUNT(*) as count FROM Opportunities WHERE CustomerId = ?').get(customerId);
     if (oppCount.count > 0) {
       // Soft-deactivate if has linked opportunities to maintain referential integrity
-      db.prepare('UPDATE Customers SET Status = "Inactive", ModifiedDate = ? WHERE CustomerId = ?')
+      db.prepare("UPDATE Customers SET Status = 'Inactive', ModifiedDate = ? WHERE CustomerId = ?")
         .run(new Date().toISOString(), Number(customerId));
       
       AuditService.log({

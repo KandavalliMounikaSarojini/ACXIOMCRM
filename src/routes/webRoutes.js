@@ -99,6 +99,7 @@ router.get('/reports/pipeline', requireAuth, ReportController.renderPipelineRepo
 router.get('/reports/pipeline/export', requireAuth, ReportController.exportPipelineCSV);
 router.get('/reports/sales', requireRole(['Admin', 'Manager']), ReportController.renderSalesReport);
 router.get('/reports/audit', requireRole('Admin'), ReportController.renderAuditReport);
+router.get('/reports/audit/export', requireRole('Admin'), ReportController.exportAuditCSV);
 
 // API Documentation & Interactive Explorer
 router.get('/api-docs', requireAuth, (req, res) => {

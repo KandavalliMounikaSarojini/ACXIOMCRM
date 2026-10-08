@@ -176,6 +176,33 @@ class ReportController {
       filters: req.query
     });
   }
+
+  static exportAuditCSV(req, res) {
+    const result = AuditService.getLogs({
+      entityName: req.query.entityName || '',
+      action: req.query.action || '',
+      startDate: req.query.startDate || '',
+      endDate: req.query.endDate || '',
+      limit: 5000
+    });
+
+    const headers = [
+      { key: 'AuditLogId', label: 'Log ID' },
+      { key: 'CreatedDate', label: 'Timestamp' },
+      { key: 'Action', label: 'Action' },
+      { key: 'EntityName', label: 'Module/Entity' },
+      { key: 'RecordId', label: 'Record ID' },
+      { key: 'UserName', label: 'User' },
+      { key: 'UserRole', label: 'Role' },
+      { key: 'IpAddress', label: 'IP Address' },
+      { key: 'Details', label: 'Details' }
+    ];
+
+    const csv = ReportService.convertToCSV(result.logs, headers);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=audit_export_${Date.now()}.csv`);
+    res.send(csv);
+  }
 }
 
 module.exports = ReportController;

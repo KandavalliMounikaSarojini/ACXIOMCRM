@@ -238,8 +238,8 @@ class ReportService {
    * Helper to convert JSON rows to CSV string with formula injection defense
    */
   static convertToCSV(data, headers) {
-    if (!data || !data.length) return '';
     const headerRow = headers.map(h => `"${h.label.replace(/"/g, '""')}"`).join(',');
+    if (!data || !data.length) return headerRow;
     const bodyRows = data.map(row => {
       return headers.map(h => {
         let val = row[h.key];
