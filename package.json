@@ -1,0 +1,37 @@
+{
+  "name": "acxiom-crm",
+  "version": "1.0.0",
+  "description": "AcxiomCRM - Enterprise Role-Based CRM System with Layered Architecture, REST APIs, Security, Auditing, and Real-Time Analytics",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "seed": "node src/database/seed.js",
+    "test": "node test/acceptance.test.js"
+  },
+  "keywords": [
+    "crm",
+    "sales",
+    "lead-management",
+    "customer-management",
+    "opportunity-pipeline",
+    "rbac",
+    "audit-log",
+    "rest-api"
+  ],
+  "author": "AcxiomCRM Engineering Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "validator": "^13.12.0"
+  }
+}

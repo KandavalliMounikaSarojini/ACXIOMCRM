@@ -1,0 +1,120 @@
+<div class="container-fluid px-0" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/activities" class="text-decoration-none text-muted text-sm">&larr; Back to Activities</a>
+      <h3 class="fw-bold mt-1 mb-0">Log Sales Activity</h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the following errors:</div>
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-telephone-plus text-primary"></i> Activity Details</span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/activities/create" method="POST" data-validate="true">
+        
+        <div class="mb-3">
+          <label for="subject" class="form-label">Activity Subject <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="subject" name="Subject" value="<%= typeof formData !== 'undefined' ? formData.Subject : '' %>" placeholder="e.g. Inbound discovery call & requirements capture" required autofocus>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label for="activityType" class="form-label">Activity Type</label>
+            <select class="form-select" id="activityType" name="ActivityType">
+              <option value="Call" selected>📞 Phone Call</option>
+              <option value="Meeting">🤝 Meeting</option>
+              <option value="Email">✉️ Email</option>
+              <option value="Task">📋 Task</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="activityDate" class="form-label">Date & Time <span class="text-danger">*</span></label>
+            <input type="datetime-local" class="form-control" id="activityDate" name="ActivityDate" value="<%= defaultDate %>" required>
+          </div>
+          <div class="col-md-4">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="Status">
+              <option value="Completed" selected>Completed</option>
+              <option value="In-Progress">In-Progress</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label for="customerId" class="form-label">Link Customer</label>
+            <select class="form-select" id="customerId" name="CustomerId">
+              <option value="">-- None --</option>
+              <% customers.forEach(c => { %>
+                <option value="<%= c.CustomerId %>" <%= preselectedCustomerId == c.CustomerId ? 'selected' : '' %>>
+                  <%= c.CustomerName %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="leadId" class="form-label">Link Lead</label>
+            <select class="form-select" id="leadId" name="LeadId">
+              <option value="">-- None --</option>
+              <% leads.forEach(l => { %>
+                <option value="<%= l.LeadId %>" <%= preselectedLeadId == l.LeadId ? 'selected' : '' %>>
+                  <%= l.LeadName %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="opportunityId" class="form-label">Link Opportunity</label>
+            <select class="form-select" id="opportunityId" name="OpportunityId">
+              <option value="">-- None --</option>
+              <% opportunities.forEach(o => { %>
+                <option value="<%= o.OpportunityId %>" <%= preselectedOpportunityId == o.OpportunityId ? 'selected' : '' %>>
+                  <%= o.OpportunityName %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label">Logged By Executive</label>
+            <select class="form-select" id="assignedTo" name="AssignedTo">
+              <% salesExecutives.forEach(exec => { %>
+                <option value="<%= exec.UserId %>" <%= currentUser.userId === exec.UserId ? 'selected' : '' %>>
+                  <%= exec.Name %> (<%= exec.RoleName %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="description" class="form-label">Activity Description & Outcome</label>
+          <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Notes, key points discussed, follow-up actions..."><%= typeof formData !== 'undefined' ? formData.Description : '' %></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+          <a href="/activities" class="btn btn-crm-outline">Cancel</a>
+          <button type="submit" class="btn btn-crm-primary px-4">
+            <i class="bi bi-check2-circle"></i> Save Activity
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

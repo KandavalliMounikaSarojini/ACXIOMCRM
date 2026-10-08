@@ -1,0 +1,117 @@
+<div class="container-fluid px-0" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/leads" class="text-decoration-none text-muted text-sm">&larr; Back to Leads</a>
+      <h3 class="fw-bold mt-1 mb-0">Capture New Prospect Lead</h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the following errors:</div>
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-person-plus-fill text-primary"></i> Lead Inbound Information</span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/leads/create" method="POST" data-validate="true">
+        
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="leadName" class="form-label">Contact / Lead Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="leadName" name="LeadName" value="<%= typeof formData !== 'undefined' ? formData.LeadName : '' %>" placeholder="e.g. Aditya Birla" required autofocus>
+          </div>
+          <div class="col-md-6">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="CompanyName" value="<%= typeof formData !== 'undefined' ? formData.CompanyName : '' %>" placeholder="e.g. Birla Smart Textiles">
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email" name="Email" value="<%= typeof formData !== 'undefined' ? formData.Email : '' %>" placeholder="aditya@company.com" required>
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+            <input type="tel" class="form-control" id="phone" name="Phone" value="<%= typeof formData !== 'undefined' ? formData.Phone : '' %>" placeholder="e.g. 9822011223" required>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label for="source" class="form-label">Lead Source</label>
+            <select class="form-select" id="source" name="Source">
+              <option value="Website" selected>Website</option>
+              <option value="Referral">Referral</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Cold Call">Cold Call</option>
+              <option value="Exhibition">Exhibition</option>
+              <option value="Email Campaign">Email Campaign</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="status" class="form-label">Initial Status</label>
+            <select class="form-select" id="status" name="Status">
+              <option value="New" selected>New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Unqualified">Unqualified</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-select" id="priority" name="Priority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+              <option value="Urgent">Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="expectedValue" class="form-label">Estimated Deal Value ($)</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" id="expectedValue" name="ExpectedValue" value="<%= typeof formData !== 'undefined' ? formData.ExpectedValue : '25000' %>" min="0" step="500">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label">Assign To Executive</label>
+            <select class="form-select" id="assignedTo" name="AssignedTo">
+              <% salesExecutives.forEach(exec => { %>
+                <option value="<%= exec.UserId %>" <%= currentUser.userId === exec.UserId ? 'selected' : '' %>>
+                  <%= exec.Name %> (<%= exec.RoleName %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="notes" class="form-label">Discovery & Lead Notes</label>
+          <textarea class="form-control" id="notes" name="Notes" rows="3" placeholder="Lead background, initial requirements, timeline..."><%= typeof formData !== 'undefined' ? formData.Notes : '' %></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+          <a href="/leads" class="btn btn-crm-outline">Cancel</a>
+          <button type="submit" class="btn btn-crm-primary px-4">
+            <i class="bi bi-funnel"></i> Capture Lead
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

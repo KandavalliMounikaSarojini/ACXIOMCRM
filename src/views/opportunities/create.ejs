@@ -1,0 +1,108 @@
+<div class="container-fluid px-0" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/opportunities" class="text-decoration-none text-muted text-sm">&larr; Back to Opportunities</a>
+      <h3 class="fw-bold mt-1 mb-0">Create Sales Opportunity</h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the following errors:</div>
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-currency-dollar text-primary"></i> Deal Terms & Pipeline Parameters</span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/opportunities/create" method="POST" data-validate="true">
+        
+        <div class="mb-3">
+          <label for="opportunityName" class="form-label">Opportunity / Deal Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="opportunityName" name="OpportunityName" value="<%= typeof formData !== 'undefined' ? formData.OpportunityName : '' %>" placeholder="e.g. Nexus Cloud - Multi-Cloud Migration Contract" required autofocus>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="customerId" class="form-label">Customer Account <span class="text-danger">*</span></label>
+            <select class="form-select" id="customerId" name="CustomerId" required>
+              <option value="">-- Select Customer Account --</option>
+              <% customers.forEach(c => { %>
+                <option value="<%= c.CustomerId %>" <%= preselectedCustomerId == c.CustomerId ? 'selected' : '' %>>
+                  <%= c.CustomerName %> (<%= c.CompanyName || c.CustomerCode %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="amount" class="form-label">Deal Amount ($) <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" id="amount" name="Amount" value="<%= typeof formData !== 'undefined' ? formData.Amount : '' %>" min="1" step="100" placeholder="e.g. 75000" required>
+            </div>
+            <div class="form-text text-xs">Must be greater than 0 for active sales opportunities.</div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label for="stage" class="form-label">Pipeline Stage <span class="text-danger">*</span></label>
+            <select class="form-select" id="stage" name="Stage" required>
+              <option value="Qualification" selected>Qualification</option>
+              <option value="Proposal">Proposal</option>
+              <option value="Negotiation">Negotiation</option>
+              <option value="Won">Closed Won</option>
+              <option value="Lost">Closed Lost</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="probability" class="form-label">Win Probability (%) <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="probability" name="Probability" value="<%= typeof formData !== 'undefined' ? formData.Probability : '25' %>" min="0" max="100" required>
+              <span class="input-group-text">%</span>
+            </div>
+            <div class="form-text text-xs">Range: 0 to 100%.</div>
+          </div>
+          <div class="col-md-4">
+            <label for="expectedCloseDate" class="form-label">Expected Close Date <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="expectedCloseDate" name="ExpectedCloseDate" value="<%= defaultCloseDate %>" required>
+            <div class="form-text text-xs">Cannot be in the past for active deals.</div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label">Opportunity Owner</label>
+            <select class="form-select" id="assignedTo" name="AssignedTo">
+              <% salesExecutives.forEach(exec => { %>
+                <option value="<%= exec.UserId %>" <%= currentUser.userId === exec.UserId ? 'selected' : '' %>>
+                  <%= exec.Name %> (<%= exec.RoleName %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="notes" class="form-label">Deal Scope & Commercial Notes</label>
+          <textarea class="form-control" id="notes" name="Notes" rows="3" placeholder="Key decision makers, competing vendors, terms..."><%= typeof formData !== 'undefined' ? formData.Notes : '' %></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+          <a href="/opportunities" class="btn btn-crm-outline">Cancel</a>
+          <button type="submit" class="btn btn-crm-primary px-4">
+            <i class="bi bi-check2-circle"></i> Save Opportunity
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

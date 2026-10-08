@@ -1,0 +1,104 @@
+<div class="container-fluid px-0" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/followups" class="text-decoration-none text-muted text-sm">&larr; Back to Schedule</a>
+      <h3 class="fw-bold mt-1 mb-0">Schedule Customer Follow-Up</h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the following errors:</div>
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-calendar-plus text-primary"></i> Activity Details</span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/followups/create" method="POST" data-validate="true">
+        
+        <div class="mb-3">
+          <label for="subject" class="form-label">Subject / Purpose <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="subject" name="Subject" value="<%= typeof formData !== 'undefined' ? formData.Subject : '' %>" placeholder="e.g. Executive Architecture Demo & Commercial Review" required autofocus>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="followUpDate" class="form-label">Scheduled Date & Time <span class="text-danger">*</span></label>
+            <input type="datetime-local" class="form-control" id="followUpDate" name="FollowUpDate" value="<%= defaultDate %>" required>
+            <div class="form-text text-xs">Cannot be scheduled earlier than today.</div>
+          </div>
+          <div class="col-md-6">
+            <label for="followUpType" class="form-label">Follow-Up Type</label>
+            <select class="form-select" id="followUpType" name="FollowUpType">
+              <option value="Call" selected>Phone Call</option>
+              <option value="Video Demo">Video Demo (Zoom / Teams)</option>
+              <option value="Meeting">In-Person Meeting</option>
+              <option value="Quote Review">Quote Review</option>
+              <option value="Email">Email Check-in</option>
+              <option value="Task">Task Action Item</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="customerId" class="form-label">Link Customer Account</label>
+            <select class="form-select" id="customerId" name="CustomerId">
+              <option value="">-- None / Select Customer --</option>
+              <% customers.forEach(c => { %>
+                <option value="<%= c.CustomerId %>" <%= preselectedCustomerId == c.CustomerId ? 'selected' : '' %>>
+                  <%= c.CustomerName %> (<%= c.CompanyName || c.CustomerCode %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="leadId" class="form-label">Or Link Lead</label>
+            <select class="form-select" id="leadId" name="LeadId">
+              <option value="">-- None / Select Lead --</option>
+              <% leads.forEach(l => { %>
+                <option value="<%= l.LeadId %>" <%= preselectedLeadId == l.LeadId ? 'selected' : '' %>>
+                  <%= l.LeadName %> (<%= l.CompanyName || l.LeadCode %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label">Assignee</label>
+            <select class="form-select" id="assignedTo" name="AssignedTo">
+              <% salesExecutives.forEach(exec => { %>
+                <option value="<%= exec.UserId %>" <%= currentUser.userId === exec.UserId ? 'selected' : '' %>>
+                  <%= exec.Name %> (<%= exec.RoleName %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="remarks" class="form-label">Agenda & Meeting Remarks</label>
+          <textarea class="form-control" id="remarks" name="Remarks" rows="3" placeholder="Key objectives, talking points, attendees..."><%= typeof formData !== 'undefined' ? formData.Remarks : '' %></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+          <a href="/followups" class="btn btn-crm-outline">Cancel</a>
+          <button type="submit" class="btn btn-crm-primary px-4">
+            <i class="bi bi-calendar-check"></i> Schedule Follow-Up
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

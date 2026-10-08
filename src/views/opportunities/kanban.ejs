@@ -1,0 +1,150 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h3 class="fw-bold mb-1">Opportunity Pipeline Board</h3>
+      <p class="text-muted mb-0">
+        Active Pipeline: <strong>$<%= Number(pipeline.totalPipeline).toLocaleString() %></strong> &bull; Weighted Valuation: <strong class="text-success">$<%= Number(pipeline.weightedPipeline).toLocaleString(undefined, {maximumFractionDigits: 0}) %></strong>
+      </p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/opportunities" class="btn btn-crm-outline">
+        <i class="bi bi-list-ul"></i> Table View
+      </a>
+      <a href="/opportunities/create" class="btn btn-crm-primary">
+        <i class="bi bi-plus-lg"></i> New Opportunity
+      </a>
+    </div>
+  </div>
+
+  <!-- 5 Stage Kanban Board -->
+  <div class="kanban-board">
+    
+    <!-- Stage: Qualification -->
+    <div class="kanban-col">
+      <div class="kanban-col-header">
+        <span class="text-primary"><i class="bi bi-circle-fill me-1" style="font-size: 0.65rem;"></i> Qualification</span>
+        <span class="badge bg-light text-dark border"><%= pipeline.grouped.Qualification.length %></span>
+      </div>
+      <div class="kanban-cards-container flex-grow-1">
+        <% pipeline.grouped.Qualification.forEach(o => { %>
+          <div class="kanban-card">
+            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-dark text-decoration-none d-block mb-1 text-sm">
+              <%= o.OpportunityName %>
+            </a>
+            <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
+              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+              <span class="text-xs text-muted"><i class="bi bi-clock me-1"></i><%= o.ExpectedCloseDate %></span>
+              <button class="btn btn-xs btn-outline-primary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Proposal')" title="Move to Proposal">
+                &rarr;
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Stage: Proposal -->
+    <div class="kanban-col">
+      <div class="kanban-col-header">
+        <span class="text-warning"><i class="bi bi-circle-fill me-1" style="font-size: 0.65rem;"></i> Proposal</span>
+        <span class="badge bg-light text-dark border"><%= pipeline.grouped.Proposal.length %></span>
+      </div>
+      <div class="kanban-cards-container flex-grow-1">
+        <% pipeline.grouped.Proposal.forEach(o => { %>
+          <div class="kanban-card">
+            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-dark text-decoration-none d-block mb-1 text-sm">
+              <%= o.OpportunityName %>
+            </a>
+            <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
+              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+              <button class="btn btn-xs btn-outline-secondary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Qualification')">&larr;</button>
+              <span class="text-xs text-muted"><%= o.ExpectedCloseDate %></span>
+              <button class="btn btn-xs btn-outline-primary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Negotiation')">&rarr;</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Stage: Negotiation -->
+    <div class="kanban-col">
+      <div class="kanban-col-header">
+        <span class="text-info"><i class="bi bi-circle-fill me-1" style="font-size: 0.65rem;"></i> Negotiation</span>
+        <span class="badge bg-light text-dark border"><%= pipeline.grouped.Negotiation.length %></span>
+      </div>
+      <div class="kanban-cards-container flex-grow-1">
+        <% pipeline.grouped.Negotiation.forEach(o => { %>
+          <div class="kanban-card">
+            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-dark text-decoration-none d-block mb-1 text-sm">
+              <%= o.OpportunityName %>
+            </a>
+            <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold text-sm text-primary">$<%= Number(o.Amount).toLocaleString() %></span>
+              <span class="badge bg-light text-secondary border text-xs"><%= o.Probability %>% prob</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+              <button class="btn btn-xs btn-outline-secondary py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Proposal')">&larr;</button>
+              <span class="text-xs text-muted"><%= o.ExpectedCloseDate %></span>
+              <button class="btn btn-xs btn-outline-success py-0 px-1 text-xs" onclick="updateOpportunityStage(<%= o.OpportunityId %>, 'Won')">Win</button>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Stage: Closed Won -->
+    <div class="kanban-col" style="background-color: #f0fdf4;">
+      <div class="kanban-col-header border-success">
+        <span class="text-success"><i class="bi bi-trophy-fill me-1"></i> Closed Won</span>
+        <span class="badge bg-success text-white"><%= pipeline.grouped.Won.length %></span>
+      </div>
+      <div class="kanban-cards-container flex-grow-1">
+        <% pipeline.grouped.Won.forEach(o => { %>
+          <div class="kanban-card border-success">
+            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-success text-decoration-none d-block mb-1 text-sm">
+              <%= o.OpportunityName %>
+            </a>
+            <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold text-sm text-success">$<%= Number(o.Amount).toLocaleString() %></span>
+              <span class="badge bg-success text-white text-xs">Closed</span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Stage: Closed Lost -->
+    <div class="kanban-col" style="background-color: #fef2f2;">
+      <div class="kanban-col-header border-danger">
+        <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Closed Lost</span>
+        <span class="badge bg-danger text-white"><%= pipeline.grouped.Lost.length %></span>
+      </div>
+      <div class="kanban-cards-container flex-grow-1">
+        <% pipeline.grouped.Lost.forEach(o => { %>
+          <div class="kanban-card border-danger">
+            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-danger text-decoration-none d-block mb-1 text-sm">
+              <%= o.OpportunityName %>
+            </a>
+            <div class="text-xs text-muted mb-2"><%= o.CustomerName || 'Unlinked' %></div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold text-sm text-danger">$<%= Number(o.Amount).toLocaleString() %></span>
+              <span class="badge bg-danger text-white text-xs">Lost</span>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+  </div>
+</div>

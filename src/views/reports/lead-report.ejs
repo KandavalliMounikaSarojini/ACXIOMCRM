@@ -1,0 +1,54 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <a href="/reports" class="text-decoration-none text-muted text-sm">&larr; Back to Reports</a>
+      <h3 class="fw-bold mt-1 mb-0">Lead Conversion & Source Report</h3>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/reports/leads/export" class="btn btn-crm-primary">
+        <i class="bi bi-file-earmark-arrow-down"></i> Export to CSV
+      </a>
+    </div>
+  </div>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-funnel text-primary"></i> Lead Pipeline & Conversion Metrics (<%= total %> records)</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Lead Code</th>
+              <th>Lead Name</th>
+              <th>Company</th>
+              <th>Source</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Expected Value</th>
+              <th>Owner</th>
+              <th>Created Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% leads.forEach(l => { %>
+              <tr>
+                <td><span class="badge bg-light text-dark border font-monospace"><%= l.LeadCode %></span></td>
+                <td class="fw-bold text-dark"><%= l.LeadName %></td>
+                <td class="text-sm"><%= l.CompanyName || '-' %></td>
+                <td><span class="badge bg-light text-secondary border"><%= l.Source %></span></td>
+                <td><span class="badge priority-<%= l.Priority.toLowerCase() %>"><%= l.Priority %></span></td>
+                <td><span class="badge-status status-<%= l.Status.toLowerCase() %>"><%= l.Status %></span></td>
+                <td class="fw-bold text-sm">$<%= Number(l.ExpectedValue).toLocaleString() %></td>
+                <td class="text-sm"><%= l.AssignedToName || 'Unassigned' %></td>
+                <td class="text-xs text-muted"><%= new Date(l.CreatedDate).toLocaleDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

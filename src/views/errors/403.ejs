@@ -1,0 +1,16 @@
+<div class="card shadow-sm border-0 mx-auto text-center p-5" style="max-width: 540px; border-radius: 12px;">
+  <div class="mb-3">
+    <div class="kpi-icon-box icon-rose mx-auto" style="width: 64px; height: 64px; font-size: 2rem;">
+      <i class="bi bi-shield-x"></i>
+    </div>
+  </div>
+  <h3 class="fw-bold text-dark mb-2">Access Denied (403 Forbidden)</h3>
+  <p class="text-secondary text-sm mb-4">
+    <%= typeof message !== 'undefined' ? message : 'You do not have the required role or permissions to access this CRM module.' %>
+  </p>
+  <div>
+    <a href="/dashboard" class="btn btn-primary px-4 fw-semibold">
+      <i class="bi bi-house-door me-1"></i> Return to Dashboard
+    </a>
+  </div>
+</div>

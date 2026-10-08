@@ -1,0 +1,198 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h3 class="fw-bold mb-1">Security & Business Audit Trail</h3>
+      <p class="text-muted mb-0">Immutable compliance log &bull; <%= total %> total audit entries</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/reports/audit" class="btn btn-crm-outline">
+        <i class="bi bi-file-earmark-text"></i> Audit Report
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="crm-card mb-4">
+    <div class="crm-card-body p-3">
+      <form action="/audit" method="GET" class="row g-2 align-items-center">
+        <div class="col-md-3">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+            <input type="text" name="search" class="form-control" placeholder="Search actor, action, details..." value="<%= filters.search %>">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <select name="entityName" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">-- All Entities --</option>
+            <option value="Customer" <%= filters.entityName === 'Customer' ? 'selected' : '' %>>Customer</option>
+            <option value="Lead" <%= filters.entityName === 'Lead' ? 'selected' : '' %>>Lead</option>
+            <option value="Opportunity" <%= filters.entityName === 'Opportunity' ? 'selected' : '' %>>Opportunity</option>
+            <option value="FollowUp" <%= filters.entityName === 'FollowUp' ? 'selected' : '' %>>FollowUp</option>
+            <option value="Activity" <%= filters.entityName === 'Activity' ? 'selected' : '' %>>Activity</option>
+            <option value="User" <%= filters.entityName === 'User' ? 'selected' : '' %>>User</option>
+            <option value="Auth" <%= filters.entityName === 'Auth' ? 'selected' : '' %>>Auth / Security</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="action" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">-- All Actions --</option>
+            <option value="LOGIN" <%= filters.action === 'LOGIN' ? 'selected' : '' %>>LOGIN</option>
+            <option value="FAILED_LOGIN" <%= filters.action === 'FAILED_LOGIN' ? 'selected' : '' %>>FAILED_LOGIN</option>
+            <option value="LOCKOUT" <%= filters.action === 'LOCKOUT' ? 'selected' : '' %>>LOCKOUT</option>
+            <option value="CREATE" <%= filters.action === 'CREATE' ? 'selected' : '' %>>CREATE</option>
+            <option value="UPDATE" <%= filters.action === 'UPDATE' ? 'selected' : '' %>>UPDATE</option>
+            <option value="DELETE" <%= filters.action === 'DELETE' ? 'selected' : '' %>>DELETE</option>
+            <option value="CONVERT" <%= filters.action === 'CONVERT' ? 'selected' : '' %>>CONVERT</option>
+            <option value="STAGE_CHANGE" <%= filters.action === 'STAGE_CHANGE' ? 'selected' : '' %>>STAGE_CHANGE</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light text-xs">From</span>
+            <input type="date" name="startDate" class="form-control" value="<%= filters.startDate %>">
+          </div>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+          <% if (filters.search || filters.entityName || filters.action || filters.startDate) { %>
+            <a href="/audit" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+          <% } %>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Audit Table -->
+  <div class="crm-card">
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action</th>
+              <th>Module / Entity</th>
+              <th>Actor (User / Role)</th>
+              <th>IP Address</th>
+              <th>Details & Remarks</th>
+              <th class="text-end">State Snapshot</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (logs && logs.length > 0) { %>
+              <% logs.forEach(l => { %>
+                <tr>
+                  <td class="text-xs text-muted font-monospace">
+                    <%= new Date(l.CreatedDate).toLocaleString() %>
+                  </td>
+                  <td>
+                    <% if (l.Action === 'FAILED_LOGIN' || l.Action === 'LOCKOUT') { %>
+                      <span class="badge bg-danger font-monospace"><%= l.Action %></span>
+                    <% } else if (l.Action === 'STAGE_CHANGE') { %>
+                      <span class="badge bg-warning text-dark font-monospace"><%= l.Action %></span>
+                    <% } else { %>
+                      <span class="badge bg-secondary font-monospace"><%= l.Action %></span>
+                    <% } %>
+                  </td>
+                  <td class="fw-semibold text-sm">
+                    <%= l.EntityName %> <%= l.RecordId ? '#' + l.RecordId : '' %>
+                  </td>
+                  <td class="text-sm">
+                    <strong><%= l.UserName %></strong> 
+                    <div class="text-xs text-muted"><%= l.UserRole %></div>
+                  </td>
+                  <td class="text-xs font-monospace text-muted">
+                    <%= l.IpAddress || '127.0.0.1' %>
+                  </td>
+                  <td class="text-sm text-secondary">
+                    <%= l.Details %>
+                  </td>
+                  <td class="text-end">
+                    <% if (l.OldValue || l.NewValue) { %>
+                      <button type="button" class="btn btn-xs btn-outline-primary py-0 px-2 text-xs" onclick="viewAuditDiff(<%= l.AuditLogId %>)">
+                        <i class="bi bi-code-square me-1"></i> Diff
+                      </button>
+                    <% } else { %>
+                      <span class="text-xs text-muted">-</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="7" class="text-center text-muted py-5">
+                  <i class="bi bi-shield-check fs-1 d-block mb-2 text-secondary"></i>
+                  No audit logs found matching the filter criteria.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+    <div class="crm-card-header bg-light py-2">
+      <div class="text-xs text-muted">Page <%= currentPage %> of <%= totalPages %> (<%= total %> total records)</div>
+      <nav aria-label="Table pagination">
+        <ul class="pagination pagination-sm mb-0">
+          <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="/audit?page=<%= i %>&search=<%= filters.search %>&entityName=<%= filters.entityName %>&action=<%= filters.action %>">
+                <%= i %>
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<!-- Audit Diff Modal -->
+<div class="modal fade" id="auditDiffModal" tabindex="-1" aria-labelledby="auditDiffModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="auditDiffModalLabel">
+          <i class="bi bi-shield-shaded text-primary me-1"></i> Audit Snapshot State Inspection
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <h6 class="fw-bold text-danger text-sm"><i class="bi bi-dash-circle me-1"></i> State Before (Old Value)</h6>
+            <pre id="oldValueBlock" class="p-3 bg-light rounded-3 border text-xs font-monospace" style="max-height: 280px; overflow-y: auto;"></pre>
+          </div>
+          <div class="col-md-6">
+            <h6 class="fw-bold text-success text-sm"><i class="bi bi-plus-circle me-1"></i> State After (New Value)</h6>
+            <pre id="newValueBlock" class="p-3 bg-light rounded-3 border text-xs font-monospace" style="max-height: 280px; overflow-y: auto;"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function viewAuditDiff(logId) {
+    try {
+      const res = await fetch(`/audit/${logId}/details`);
+      const data = await res.json();
+      if (!data.success || !data.log) return;
+
+      document.getElementById('oldValueBlock').innerText = data.log.oldValueParsed ? JSON.stringify(data.log.oldValueParsed, null, 2) : 'None / Not Applicable';
+      document.getElementById('newValueBlock').innerText = data.log.newValueParsed ? JSON.stringify(data.log.newValueParsed, null, 2) : 'None / Not Applicable';
+      new bootstrap.Modal(document.getElementById('auditDiffModal')).show();
+    } catch (err) {
+      showToast('Failed to load audit diff details.', 'error');
+    }
+  }
+</script>

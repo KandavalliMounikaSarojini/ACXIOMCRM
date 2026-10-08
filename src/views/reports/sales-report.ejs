@@ -1,0 +1,87 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <a href="/reports" class="text-decoration-none text-muted text-sm">&larr; Back to Reports</a>
+      <h3 class="fw-bold mt-1 mb-0">Sales Performance & Executive Leaderboard</h3>
+    </div>
+  </div>
+
+  <!-- Leaderboard Table -->
+  <div class="crm-card mb-4">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-trophy-fill text-warning"></i> Representative Leaderboard (Revenue & Quota)</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Sales Executive</th>
+              <th>Role</th>
+              <th>Accounts Managed</th>
+              <th>Open Leads</th>
+              <th>Deals in Scope</th>
+              <th>Active Pipeline ($)</th>
+              <th>Closed-Won Revenue ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% leaderboard.forEach((exec, idx) => { %>
+              <tr>
+                <td>
+                  <% if (idx === 0) { %>
+                    <span class="badge bg-warning text-dark"><i class="bi bi-award-fill me-1"></i> #1</span>
+                  <% } else { %>
+                    <span class="badge bg-light text-secondary border">#<%= idx + 1 %></span>
+                  <% } %>
+                </td>
+                <td class="fw-bold text-dark"><%= exec.Name %></td>
+                <td><span class="role-tag role-<%= exec.RoleName.toLowerCase() %>"><%= exec.RoleName %></span></td>
+                <td><%= exec.CustomerCount %></td>
+                <td><%= exec.LeadCount %></td>
+                <td><%= exec.OppCount %></td>
+                <td class="fw-bold text-primary">$<%= Number(exec.ActivePipeline).toLocaleString() %></td>
+                <td class="fw-bold text-success fs-6">$<%= Number(exec.WonRevenue).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Won Opportunities List -->
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-check-circle-fill text-success"></i> Recently Closed-Won Contracts</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Opportunity Name</th>
+              <th>Customer</th>
+              <th>Revenue ($)</th>
+              <th>Close Date</th>
+              <th>Closed By</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% wonOpportunities.forEach(w => { %>
+              <tr>
+                <td class="fw-bold text-primary"><a href="/opportunities/<%= w.OpportunityId %>" class="text-decoration-none"><%= w.OpportunityName %></a></td>
+                <td class="text-sm"><%= w.CustomerName %></td>
+                <td class="fw-bold text-success">$<%= Number(w.Amount).toLocaleString() %></td>
+                <td class="text-sm text-muted"><%= w.ExpectedCloseDate %></td>
+                <td class="text-sm"><%= w.AssignedToName %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

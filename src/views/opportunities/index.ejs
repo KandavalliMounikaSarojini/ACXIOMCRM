@@ -1,0 +1,167 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h3 class="fw-bold mb-1">Sales Opportunities</h3>
+      <p class="text-muted mb-0">Deals in active pipeline &bull; <%= total %> total opportunities</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/reports/pipeline/export" class="btn btn-crm-outline">
+        <i class="bi bi-file-earmark-arrow-down"></i> Export CSV
+      </a>
+      <a href="/opportunities/kanban" class="btn btn-crm-outline">
+        <i class="bi bi-kanban"></i> Kanban Board
+      </a>
+      <a href="/opportunities/create" class="btn btn-crm-primary">
+        <i class="bi bi-plus-lg"></i> New Opportunity
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filter Card -->
+  <div class="crm-card mb-4">
+    <div class="crm-card-body p-3">
+      <form action="/opportunities" method="GET" class="row g-2 align-items-center">
+        <div class="col-md-3">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+            <input type="text" name="search" class="form-control" placeholder="Search deal, customer..." value="<%= filters.search %>">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select name="stage" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">-- All Pipeline Stages --</option>
+            <option value="Qualification" <%= filters.stage === 'Qualification' ? 'selected' : '' %>>Qualification</option>
+            <option value="Proposal" <%= filters.stage === 'Proposal' ? 'selected' : '' %>>Proposal</option>
+            <option value="Negotiation" <%= filters.stage === 'Negotiation' ? 'selected' : '' %>>Negotiation</option>
+            <option value="Won" <%= filters.stage === 'Won' ? 'selected' : '' %>>Closed Won</option>
+            <option value="Lost" <%= filters.stage === 'Lost' ? 'selected' : '' %>>Closed Lost</option>
+          </select>
+        </div>
+        <% if (currentUser.roleName !== 'SalesExecutive') { %>
+        <div class="col-md-3">
+          <select name="assignedTo" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">-- All Account Owners --</option>
+            <% salesExecutives.forEach(exec => { %>
+              <option value="<%= exec.UserId %>" <%= filters.assignedTo == exec.UserId ? 'selected' : '' %>>
+                <%= exec.Name %> (<%= exec.RoleName %>)
+              </option>
+            <% }) %>
+          </select>
+        </div>
+        <% } %>
+        <div class="col-md-3 d-flex gap-2">
+          <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+          <% if (filters.search || filters.stage || filters.assignedTo) { %>
+            <a href="/opportunities" class="btn btn-sm btn-outline-secondary"><i class="bi bi-x-lg"></i></a>
+          <% } %>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Opportunity Records Table -->
+  <div class="crm-card">
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Opportunity Deal</th>
+              <th>Customer Account</th>
+              <th>Deal Value ($)</th>
+              <th>Probability (%)</th>
+              <th>Weighted Pipeline ($)</th>
+              <th>Stage</th>
+              <th>Expected Close</th>
+              <th>Assigned Owner</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (opportunities && opportunities.length > 0) { %>
+              <% opportunities.forEach(o => { %>
+                <tr>
+                  <td>
+                    <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-primary text-decoration-none d-block">
+                      <%= o.OpportunityName %>
+                    </a>
+                  </td>
+                  <td class="text-sm">
+                    <% if (o.CustomerId) { %>
+                      <a href="/customers/<%= o.CustomerId %>" class="text-decoration-none text-dark fw-semibold">
+                        <%= o.CustomerName || 'Customer #' + o.CustomerId %>
+                      </a>
+                    <% } else { %>
+                      <span class="text-muted">Unlinked</span>
+                    <% } %>
+                  </td>
+                  <td class="fw-bold text-sm">
+                    $<%= Number(o.Amount).toLocaleString() %>
+                  </td>
+                  <td class="text-sm">
+                    <div class="d-flex align-items-center gap-1">
+                      <div class="progress flex-grow-1" style="height: 6px; width: 60px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: <%= o.Probability %>%;"></div>
+                      </div>
+                      <span class="text-xs fw-semibold"><%= o.Probability %>%</span>
+                    </div>
+                  </td>
+                  <td class="fw-bold text-success text-sm">
+                    $<%= Number(o.WeightedAmount || (o.Amount * o.Probability / 100)).toLocaleString(undefined, {maximumFractionDigits: 0}) %>
+                  </td>
+                  <td>
+                    <span class="badge-status status-<%= o.Stage.toLowerCase() %>">
+                      <%= o.Stage %>
+                    </span>
+                  </td>
+                  <td class="text-sm text-muted">
+                    <%= o.ExpectedCloseDate %>
+                  </td>
+                  <td class="text-sm">
+                    <%= o.AssignedToName || 'Unassigned' %>
+                  </td>
+                  <td class="text-end">
+                    <div class="btn-group btn-group-sm">
+                      <a href="/opportunities/<%= o.OpportunityId %>" class="btn btn-outline-secondary" title="View Opportunity">
+                        <i class="bi bi-eye"></i>
+                      </a>
+                      <a href="/opportunities/<%= o.OpportunityId %>/edit" class="btn btn-outline-secondary" title="Edit Opportunity">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="9" class="text-center text-muted py-5">
+                  <i class="bi bi-currency-dollar fs-1 d-block mb-2 text-secondary"></i>
+                  No opportunities found matching the search criteria.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+    <div class="crm-card-header bg-light py-2">
+      <div class="text-xs text-muted">Page <%= currentPage %> of <%= totalPages %> (<%= total %> total records)</div>
+      <nav aria-label="Table pagination">
+        <ul class="pagination pagination-sm mb-0">
+          <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="/opportunities?page=<%= i %>&search=<%= filters.search %>&stage=<%= filters.stage %>">
+                <%= i %>
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+    <% } %>
+  </div>
+</div>

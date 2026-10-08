@@ -1,0 +1,61 @@
+<div class="container-fluid px-0">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold mb-1">My User Profile</h3>
+      <p class="text-muted mb-0">Manage your active account credentials and access permissions</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="crm-card text-center p-4">
+        <div class="avatar-circle mx-auto mb-3" style="width: 72px; height: 72px; font-size: 1.8rem;">
+          <%= user.name.charAt(0).toUpperCase() %>
+        </div>
+        <h5 class="fw-bold mb-1"><%= user.name %></h5>
+        <div class="text-muted text-sm mb-2"><%= user.email %></div>
+        <div>
+          <span class="role-tag role-<%= user.roleName.toLowerCase() %> px-3 py-1">
+            <%= user.roleName %> Role
+          </span>
+        </div>
+        <hr class="my-4">
+        <div class="text-start">
+          <div class="text-xs text-muted mb-1">USER ID</div>
+          <div class="fw-semibold mb-3">#<%= user.userId %></div>
+          <div class="text-xs text-muted mb-1">ACCOUNT STATUS</div>
+          <div class="fw-semibold text-success mb-3"><i class="bi bi-check-circle-fill me-1"></i> Active</div>
+          <div class="text-xs text-muted mb-1">LAST LOGIN SESSION</div>
+          <div class="fw-semibold text-sm"><%= new Date(user.lastLoginDate || Date.now()).toLocaleString() %></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-8">
+      <div class="crm-card">
+        <div class="crm-card-header">
+          <span class="crm-card-title"><i class="bi bi-shield-lock-fill text-primary"></i> Security & Role Privileges</span>
+        </div>
+        <div class="crm-card-body">
+          <h6 class="fw-bold mb-2">Role Scope & Authorization</h6>
+          <p class="text-muted text-sm mb-4">
+            <% if (user.roleName === 'Admin') { %>
+              Your account has <strong>Full System Administration</strong> privileges. You can manage users, roles, view global audit records, all CRM objects, and export reports.
+            <% } else if (user.roleName === 'Manager') { %>
+              Your account has <strong>Managerial</strong> privileges. You can view team pipelines, monitor sales conversion KPIs, oversee customer accounts, and access management reports.
+            <% } else { %>
+              Your account has <strong>Sales Executive</strong> privileges. You have direct access to your assigned customers, leads, opportunities, follow-up calendar, and personalized analytics.
+            <% } %>
+          </p>
+
+          <div class="p-3 bg-light rounded-3 border">
+            <h6 class="fw-bold mb-2 text-sm"><i class="bi bi-key-fill text-warning me-1"></i> REST API Access</h6>
+            <p class="text-muted text-xs mb-2">
+              Use Bearer token authorization in the <a href="/api-docs" class="fw-semibold text-primary">REST API Interactive Explorer</a> to interact with all CRM endpoints.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

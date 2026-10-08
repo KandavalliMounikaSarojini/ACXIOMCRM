@@ -1,0 +1,258 @@
+<div class="container-fluid px-0">
+  
+  <!-- Breadcrumb & Top bar -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <a href="/customers" class="text-decoration-none text-muted text-sm">&larr; Back to Directory</a>
+      <div class="d-flex align-items-center gap-2 mt-1">
+        <h3 class="fw-bold mb-0"><%= customer.CustomerName %></h3>
+        <span class="badge bg-light text-dark border font-monospace"><%= customer.CustomerCode %></span>
+        <span class="badge-status status-<%= customer.Status.toLowerCase() %>"><%= customer.Status %></span>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/opportunities/create?customerId=<%= customer.CustomerId %>" class="btn btn-crm-outline">
+        <i class="bi bi-currency-dollar"></i> New Deal
+      </a>
+      <a href="/followups/create?customerId=<%= customer.CustomerId %>" class="btn btn-crm-outline">
+        <i class="bi bi-calendar-plus"></i> Follow-Up
+      </a>
+      <a href="/activities/create?customerId=<%= customer.CustomerId %>" class="btn btn-crm-outline">
+        <i class="bi bi-telephone-plus"></i> Log Activity
+      </a>
+      <a href="/customers/<%= customer.CustomerId %>/edit" class="btn btn-crm-primary">
+        <i class="bi bi-pencil"></i> Edit Customer
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    
+    <!-- Left Column: Master Data Info Card -->
+    <div class="col-lg-4">
+      <div class="crm-card">
+        <div class="crm-card-header">
+          <span class="crm-card-title"><i class="bi bi-person-badge-fill text-primary"></i> Customer 360 Overview</span>
+        </div>
+        <div class="crm-card-body">
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Company</div>
+            <div class="fw-semibold text-dark"><%= customer.CompanyName || 'Independent' %></div>
+          </div>
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Email Address</div>
+            <div class="text-dark"><a href="mailto:<%= customer.Email %>" class="text-decoration-none"><%= customer.Email %></a></div>
+          </div>
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Phone</div>
+            <div class="text-dark"><a href="tel:<%= customer.Phone %>" class="text-decoration-none"><%= customer.Phone %></a></div>
+          </div>
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Location</div>
+            <div class="text-dark"><%= customer.Address ? customer.Address + ', ' : '' %><%= customer.City ? customer.City + ', ' : '' %><%= customer.State || 'Not Specified' %></div>
+          </div>
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Assigned Executive</div>
+            <div class="fw-semibold text-primary"><i class="bi bi-person-check me-1"></i><%= customer.OwnerName || 'Unassigned' %></div>
+          </div>
+          <div class="mb-3">
+            <div class="text-xs text-muted fw-bold text-uppercase">Created On</div>
+            <div class="text-sm text-muted"><%= new Date(customer.CreatedDate).toLocaleDateString() %> by <%= customer.CreatorName || 'System' %></div>
+          </div>
+          <% if (customer.Notes) { %>
+          <div class="p-3 bg-light rounded-3 border mt-3">
+            <div class="text-xs text-muted fw-bold text-uppercase mb-1">Account Notes</div>
+            <div class="text-sm text-secondary"><%= customer.Notes %></div>
+          </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Tabs for Deals, Follow-ups, Activities, Audit -->
+    <div class="col-lg-8">
+      <div class="crm-card">
+        
+        <!-- Nav Tabs -->
+        <div class="crm-card-header p-0">
+          <ul class="nav nav-tabs border-0" id="customerTabs" role="tablist">
+            <li class="nav-item">
+              <button class="nav-link active px-4 py-3 fw-semibold border-0" id="opps-tab" data-bs-toggle="tab" data-bs-target="#opps-pane" type="button" role="tab">
+                <i class="bi bi-currency-dollar me-1 text-primary"></i> Opportunities (<%= opportunities.length %>)
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link px-4 py-3 fw-semibold border-0" id="followups-tab" data-bs-toggle="tab" data-bs-target="#followups-pane" type="button" role="tab">
+                <i class="bi bi-calendar-check me-1 text-info"></i> Follow-Ups (<%= followUps.length %>)
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link px-4 py-3 fw-semibold border-0" id="activities-tab" data-bs-toggle="tab" data-bs-target="#activities-pane" type="button" role="tab">
+                <i class="bi bi-clock-history me-1 text-warning"></i> Activities (<%= activities.length %>)
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link px-4 py-3 fw-semibold border-0" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit-pane" type="button" role="tab">
+                <i class="bi bi-shield-check me-1 text-success"></i> Audit Trail
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <div class="crm-card-body p-0">
+          <div class="tab-content" id="customerTabsContent">
+            
+            <!-- Tab 1: Opportunities -->
+            <div class="tab-pane fade show active p-3" id="opps-pane" role="tabpanel">
+              <% if (opportunities && opportunities.length > 0) { %>
+                <div class="table-responsive">
+                  <table class="crm-table">
+                    <thead>
+                      <tr>
+                        <th>Opportunity Name</th>
+                        <th>Amount</th>
+                        <th>Stage</th>
+                        <th>Probability</th>
+                        <th>Expected Close</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% opportunities.forEach(o => { %>
+                        <tr>
+                          <td>
+                            <a href="/opportunities/<%= o.OpportunityId %>" class="fw-bold text-primary text-decoration-none">
+                              <%= o.OpportunityName %>
+                            </a>
+                          </td>
+                          <td class="fw-bold">$<%= Number(o.Amount).toLocaleString() %></td>
+                          <td>
+                            <span class="badge-status status-<%= o.Stage.toLowerCase() %>"><%= o.Stage %></span>
+                          </td>
+                          <td><%= o.Probability %>%</td>
+                          <td class="text-sm"><%= o.ExpectedCloseDate %></td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } else { %>
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-briefcase fs-2 d-block mb-2"></i>
+                  No active sales opportunities for this customer.
+                  <div class="mt-2">
+                    <a href="/opportunities/create?customerId=<%= customer.CustomerId %>" class="btn btn-sm btn-primary">Create Deal</a>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Tab 2: Follow-Ups -->
+            <div class="tab-pane fade p-3" id="followups-pane" role="tabpanel">
+              <% if (followUps && followUps.length > 0) { %>
+                <div class="table-responsive">
+                  <table class="crm-table">
+                    <thead>
+                      <tr>
+                        <th>Subject / Type</th>
+                        <th>Scheduled Date</th>
+                        <th>Status</th>
+                        <th>Assigned To</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% followUps.forEach(f => { %>
+                        <tr>
+                          <td>
+                            <div class="fw-semibold"><%= f.Subject %></div>
+                            <span class="badge bg-light text-dark border text-xs"><%= f.FollowUpType %></span>
+                          </td>
+                          <td class="text-sm"><%= new Date(f.FollowUpDate).toLocaleString() %></td>
+                          <td>
+                            <span class="badge-status status-<%= f.Status.toLowerCase() %>"><%= f.Status %></span>
+                          </td>
+                          <td class="text-sm"><%= f.AssignedToName %></td>
+                          <td>
+                            <% if (f.Status === 'Planned') { %>
+                              <button type="button" class="btn btn-sm btn-outline-success py-0 px-2 text-xs" onclick="completeFollowUp(<%= f.FollowUpId %>)">
+                                Complete
+                              </button>
+                            <% } else { %>
+                              <span class="text-xs text-muted">Done</span>
+                            <% } %>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } else { %>
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>
+                  No follow-ups recorded for this customer.
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Tab 3: Activities -->
+            <div class="tab-pane fade p-3" id="activities-pane" role="tabpanel">
+              <% if (activities && activities.length > 0) { %>
+                <div class="list-group list-group-flush">
+                  <% activities.forEach(a => { %>
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                      <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div class="fw-bold text-dark">
+                          <span class="badge bg-primary-subtle text-primary me-2"><%= a.ActivityType %></span>
+                          <%= a.Subject %>
+                        </div>
+                        <span class="text-xs text-muted"><%= new Date(a.ActivityDate).toLocaleString() %></span>
+                      </div>
+                      <p class="text-sm text-secondary mb-1"><%= a.Description || 'No description recorded.' %></p>
+                      <div class="text-xs text-muted">Logged by <%= a.AssignedToName %></div>
+                    </div>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <div class="text-center py-5 text-muted">
+                  <i class="bi bi-chat-left-text fs-2 d-block mb-2"></i>
+                  No engagement activities logged yet.
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Tab 4: Audit Trail -->
+            <div class="tab-pane fade p-3" id="audit-pane" role="tabpanel">
+              <% if (auditTrail && auditTrail.length > 0) { %>
+                <div class="table-responsive">
+                  <table class="crm-table">
+                    <thead>
+                      <tr>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                        <th>Actor</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% auditTrail.forEach(log => { %>
+                        <tr>
+                          <td class="text-xs text-muted"><%= new Date(log.CreatedDate).toLocaleString() %></td>
+                          <td><span class="badge bg-secondary font-monospace"><%= log.Action %></span></td>
+                          <td class="text-sm"><%= log.UserName %> (<%= log.UserRole %>)</td>
+                          <td class="text-sm"><%= log.Details %></td>
+                        </tr>
+                      <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              <% } else { %>
+                <div class="text-center py-5 text-muted">No audit records found.</div>
+              <% } %>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

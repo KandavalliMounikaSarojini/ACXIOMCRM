@@ -1,0 +1,45 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <a href="/reports" class="text-decoration-none text-muted text-sm">&larr; Back to Reports</a>
+      <h3 class="fw-bold mt-1 mb-0">Compliance & Security Audit Report</h3>
+    </div>
+  </div>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-shield-check text-success"></i> Security Events, Failed Logins & System Mutations (<%= total %> events)</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Action</th>
+              <th>Module</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>IP Address</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% logs.forEach(l => { %>
+              <tr>
+                <td class="text-xs text-muted font-monospace"><%= new Date(l.CreatedDate).toLocaleString() %></td>
+                <td><span class="badge bg-secondary font-monospace"><%= l.Action %></span></td>
+                <td class="text-sm fw-semibold"><%= l.EntityName %></td>
+                <td class="text-sm"><%= l.UserName %></td>
+                <td><span class="role-tag role-<%= (l.UserRole || '').toLowerCase() %>"><%= l.UserRole %></span></td>
+                <td class="text-xs font-monospace text-muted"><%= l.IpAddress %></td>
+                <td class="text-sm text-secondary"><%= l.Details %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

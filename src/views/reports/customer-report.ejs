@@ -1,0 +1,54 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <a href="/reports" class="text-decoration-none text-muted text-sm">&larr; Back to Reports</a>
+      <h3 class="fw-bold mt-1 mb-0">Customer Master Report</h3>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="/reports/customers/export" class="btn btn-crm-primary">
+        <i class="bi bi-file-earmark-arrow-down"></i> Export to CSV
+      </a>
+    </div>
+  </div>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-table text-primary"></i> Customer Account Master List (<%= total %> records)</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Customer Name</th>
+              <th>Company</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Location</th>
+              <th>Status</th>
+              <th>Owner</th>
+              <th>Created Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% customers.forEach(c => { %>
+              <tr>
+                <td><span class="badge bg-light text-dark border font-monospace"><%= c.CustomerCode %></span></td>
+                <td class="fw-bold text-dark"><%= c.CustomerName %></td>
+                <td class="text-sm"><%= c.CompanyName || '-' %></td>
+                <td class="text-sm"><%= c.Email %></td>
+                <td class="text-sm"><%= c.Phone %></td>
+                <td class="text-sm"><%= c.City ? c.City + (c.State ? ', ' + c.State : '') : '-' %></td>
+                <td><span class="badge-status status-<%= c.Status.toLowerCase() %>"><%= c.Status %></span></td>
+                <td class="text-sm"><%= c.OwnerName || 'Unassigned' %></td>
+                <td class="text-xs text-muted"><%= new Date(c.CreatedDate).toLocaleDateString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

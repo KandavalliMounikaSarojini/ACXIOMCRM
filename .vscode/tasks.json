@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "problemMatcher": [],
+      "label": "Start AcxiomCRM Enterprise Server",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "problemMatcher": [],
+      "label": "Run Acceptance Tests"
+    }
+  ]
+}

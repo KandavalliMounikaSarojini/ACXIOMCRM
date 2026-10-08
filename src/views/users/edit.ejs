@@ -1,0 +1,65 @@
+<div class="container-fluid px-0" style="max-width: 700px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/users" class="text-decoration-none text-muted text-sm">&larr; Back to Users</a>
+      <h3 class="fw-bold mt-1 mb-0">Edit User: <%= user.Name %></h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-pencil-square text-primary"></i> Edit Account Settings</span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/users/<%= user.UserId %>/edit" method="POST" data-validate="true">
+        
+        <div class="mb-3">
+          <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="name" name="Name" value="<%= user.Name %>" required autofocus>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Work Email <span class="text-danger">*</span></label>
+          <input type="email" class="form-control" id="email" name="Email" value="<%= user.Email %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="roleName" class="form-label">Role Assignment <span class="text-danger">*</span></label>
+          <select class="form-select" id="roleName" name="RoleName" required>
+            <% roles.forEach(r => { %>
+              <option value="<%= r.RoleName %>" <%= user.RoleName === r.RoleName ? 'selected' : '' %>>
+                <%= r.RoleName %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-4">
+          <label for="isActive" class="form-label">Account Status</label>
+          <select class="form-select" id="isActive" name="IsActive">
+            <option value="1" <%= user.IsActive ? 'selected' : '' %>>Active</option>
+            <option value="0" <%= !user.IsActive ? 'selected' : '' %>>Inactive / Deactivated</option>
+          </select>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end gap-2 border-top pt-3">
+          <a href="/users" class="btn btn-crm-outline">Cancel</a>
+          <button type="submit" class="btn btn-crm-primary px-4">
+            <i class="bi bi-check2"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

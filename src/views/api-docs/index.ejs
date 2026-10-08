@@ -1,0 +1,197 @@
+<div class="container-fluid px-0">
+  
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+      <h3 class="fw-bold mb-1">REST API Interactive Explorer & Specification</h3>
+      <p class="text-muted mb-0">Production REST API endpoints &bull; JWT Bearer Token Authentication</p>
+    </div>
+  </div>
+
+  <!-- Live Interactive API Console -->
+  <div class="crm-card mb-4 border-primary">
+    <div class="crm-card-header bg-primary text-white">
+      <span class="crm-card-title text-white"><i class="bi bi-terminal-fill me-1"></i> Live In-Browser API Tester</span>
+      <span class="badge bg-white text-primary fw-bold">Live Execution</span>
+    </div>
+    <div class="crm-card-body p-4">
+      
+      <!-- JWT Token input -->
+      <div class="mb-3">
+        <label class="form-label fw-bold text-xs text-uppercase">Active JWT Bearer Token</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-light"><i class="bi bi-key-fill text-warning"></i></span>
+          <input type="text" id="jwtAuthToken" class="form-control font-monospace" value="<%= jwtToken %>" placeholder="Bearer JWT token...">
+          <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('jwtAuthToken').value); showToast('Token copied to clipboard!', 'success');">
+            <i class="bi bi-clipboard"></i> Copy Token
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Preset Requests -->
+      <div class="mb-3">
+        <label class="form-label text-xs fw-bold text-uppercase">1-Click Endpoint Preset:</label>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-sm btn-outline-primary" onclick="loadPreset('GET', '/api/customers', null)">
+            <span class="badge bg-primary">GET</span> /api/customers
+          </button>
+          <button class="btn btn-sm btn-outline-primary" onclick="loadPreset('GET', '/api/leads', null)">
+            <span class="badge bg-primary">GET</span> /api/leads
+          </button>
+          <button class="btn btn-sm btn-outline-primary" onclick="loadPreset('GET', '/api/opportunities', null)">
+            <span class="badge bg-primary">GET</span> /api/opportunities
+          </button>
+          <button class="btn btn-sm btn-outline-primary" onclick="loadPreset('GET', '/api/reports/pipeline', null)">
+            <span class="badge bg-primary">GET</span> /api/reports/pipeline
+          </button>
+          <button class="btn btn-sm btn-outline-success" onclick="loadPreset('POST', '/api/customers', JSON.stringify({ CustomerName: 'Alpha Tech Corp', Email: 'sales@alphatech.com', Phone: '9876543210', CompanyName: 'Alpha Tech', City: 'Bangalore', Status: 'Active' }, null, 2))">
+            <span class="badge bg-success">POST</span> /api/customers
+          </button>
+          <button class="btn btn-sm btn-outline-success" onclick="loadPreset('POST', '/api/opportunities', JSON.stringify({ OpportunityName: 'Alpha Tech Enterprise Platform', CustomerId: 1, Amount: 95000, Stage: 'Proposal', Probability: 60, ExpectedCloseDate: '2026-11-30' }, null, 2))">
+            <span class="badge bg-success">POST</span> /api/opportunities
+          </button>
+        </div>
+      </div>
+
+      <!-- Request Details -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label text-xs fw-bold">HTTP Method</label>
+          <select id="apiReqMethod" class="form-select form-select-sm">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+          </select>
+        </div>
+        <div class="col-md-9">
+          <label class="form-label text-xs fw-bold">API Endpoint URL</label>
+          <div class="input-group input-group-sm">
+            <input type="text" id="apiReqEndpoint" class="form-control font-monospace" value="/api/customers">
+            <button class="btn btn-primary fw-bold px-3" type="button" onclick="sendCustomRequest()">
+              <i class="bi bi-play-fill"></i> Execute Request
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request Body & Response Panels -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label text-xs fw-bold text-uppercase">Request JSON Payload (for POST/PUT)</label>
+          <textarea id="apiReqBody" class="form-control font-monospace text-xs" rows="8" placeholder='{"key": "value"}'></textarea>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="form-label text-xs fw-bold text-uppercase mb-0">Response Output</label>
+            <span id="apiResponseStatus" class="badge bg-secondary">Idle</span>
+          </div>
+          <pre id="apiResponseBody" class="p-3 bg-dark text-light rounded-3 text-xs font-monospace border" style="height: 170px; overflow-y: auto;">Click "Execute Request" above to test any endpoint live...</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Endpoints Reference Table -->
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-journal-code text-primary"></i> REST API Endpoint Reference Catalog</span>
+    </div>
+    <div class="crm-card-body p-0">
+      <div class="table-responsive">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Purpose / Operation</th>
+              <th>Authorization Level</th>
+              <th>Sample Request / Output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge bg-success font-monospace">POST</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/auth/login</td>
+              <td>Authenticate user credentials & issue JWT token</td>
+              <td><span class="badge bg-light text-dark border">Public</span></td>
+              <td class="text-xs text-muted">Body: { email, password }</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-primary font-monospace">GET</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/customers</td>
+              <td>List and search customers (supports pagination)</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: [ CustomerDTO ]</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-success font-monospace">POST</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/customers</td>
+              <td>Create a new customer master record</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Body: { CustomerName, Email, Phone... }</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-primary font-monospace">GET</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/customers/:id</td>
+              <td>Retrieve customer details by ID</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: Customer Details</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-warning text-dark font-monospace">PUT</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/customers/:id</td>
+              <td>Update customer master record</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Body: Customer payload</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-danger font-monospace">DELETE</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/customers/:id</td>
+              <td>Delete or deactivate customer</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: { success: true }</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-primary font-monospace">GET</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/leads</td>
+              <td>List and filter prospects & leads</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: [ LeadDTO ]</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-success font-monospace">POST</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/leads</td>
+              <td>Capture new lead</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Body: { LeadName, Email, Phone, ExpectedValue }</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-primary font-monospace">GET</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/opportunities</td>
+              <td>List opportunities with stage & weighted value</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: [ OpportunityDTO ]</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-success font-monospace">POST</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/opportunities</td>
+              <td>Create sales deal opportunity</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Body: { OpportunityName, Amount, Probability... }</td>
+            </tr>
+            <tr>
+              <td><span class="badge bg-primary font-monospace">GET</span></td>
+              <td class="font-monospace fw-bold text-dark">/api/reports/pipeline</td>
+              <td>Retrieve stage-wise and owner-wise valuation</td>
+              <td><span class="badge bg-primary-subtle text-primary border">Authenticated</span></td>
+              <td class="text-xs text-muted">Returns: Pipeline metrics & forecasts</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+

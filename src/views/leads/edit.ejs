@@ -1,0 +1,128 @@
+<div class="container-fluid px-0" style="max-width: 800px;">
+  
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <a href="/leads/<%= lead.LeadId %>" class="text-decoration-none text-muted text-sm">&larr; Back to Lead</a>
+      <h3 class="fw-bold mt-1 mb-0">Edit Lead: <%= lead.LeadName %></h3>
+    </div>
+  </div>
+
+  <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+    <div class="alert alert-danger py-2 mb-4" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> Please correct the following errors:</div>
+      <ul class="mb-0 ps-3">
+        <% errors.forEach(err => { %>
+          <li><%= err.message %></li>
+        <% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="crm-card">
+    <div class="crm-card-header">
+      <span class="crm-card-title"><i class="bi bi-pencil-square text-primary"></i> Edit Lead Profile</span>
+      <span class="badge bg-light text-dark border font-monospace"><%= lead.LeadCode %></span>
+    </div>
+    <div class="crm-card-body p-4">
+      <form action="/leads/<%= lead.LeadId %>/edit" method="POST" data-validate="true">
+        
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="leadName" class="form-label">Contact / Lead Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="leadName" name="LeadName" value="<%= lead.LeadName %>" required autofocus>
+          </div>
+          <div class="col-md-6">
+            <label for="companyName" class="form-label">Company Name</label>
+            <input type="text" class="form-control" id="companyName" name="CompanyName" value="<%= lead.CompanyName || '' %>">
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="email" name="Email" value="<%= lead.Email %>" required>
+          </div>
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+            <input type="tel" class="form-control" id="phone" name="Phone" value="<%= lead.Phone %>" required>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label for="source" class="form-label">Lead Source</label>
+            <select class="form-select" id="source" name="Source">
+              <option value="Website" <%= lead.Source === 'Website' ? 'selected' : '' %>>Website</option>
+              <option value="Referral" <%= lead.Source === 'Referral' ? 'selected' : '' %>>Referral</option>
+              <option value="LinkedIn" <%= lead.Source === 'LinkedIn' ? 'selected' : '' %>>LinkedIn</option>
+              <option value="Cold Call" <%= lead.Source === 'Cold Call' ? 'selected' : '' %>>Cold Call</option>
+              <option value="Exhibition" <%= lead.Source === 'Exhibition' ? 'selected' : '' %>>Exhibition</option>
+              <option value="Email Campaign" <%= lead.Source === 'Email Campaign' ? 'selected' : '' %>>Email Campaign</option>
+              <option value="Other" <%= lead.Source === 'Other' ? 'selected' : '' %>>Other</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="status" class="form-label">Lead Status</label>
+            <select class="form-select" id="status" name="Status">
+              <option value="New" <%= lead.Status === 'New' ? 'selected' : '' %>>New</option>
+              <option value="Contacted" <%= lead.Status === 'Contacted' ? 'selected' : '' %>>Contacted</option>
+              <option value="Qualified" <%= lead.Status === 'Qualified' ? 'selected' : '' %>>Qualified</option>
+              <option value="Unqualified" <%= lead.Status === 'Unqualified' ? 'selected' : '' %>>Unqualified</option>
+              <option value="Converted" <%= lead.Status === 'Converted' ? 'selected' : '' %>>Converted</option>
+              <option value="Lost" <%= lead.Status === 'Lost' ? 'selected' : '' %>>Lost</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label for="priority" class="form-label">Priority</label>
+            <select class="form-select" id="priority" name="Priority">
+              <option value="Low" <%= lead.Priority === 'Low' ? 'selected' : '' %>>Low</option>
+              <option value="Medium" <%= lead.Priority === 'Medium' ? 'selected' : '' %>>Medium</option>
+              <option value="High" <%= lead.Priority === 'High' ? 'selected' : '' %>>High</option>
+              <option value="Urgent" <%= lead.Priority === 'Urgent' ? 'selected' : '' %>>Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label for="expectedValue" class="form-label">Estimated Deal Value ($)</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control" id="expectedValue" name="ExpectedValue" value="<%= lead.ExpectedValue %>" min="0" step="500">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="assignedTo" class="form-label">Assign To Executive</label>
+            <select class="form-select" id="assignedTo" name="AssignedTo">
+              <% salesExecutives.forEach(exec => { %>
+                <option value="<%= exec.UserId %>" <%= lead.AssignedTo == exec.UserId ? 'selected' : '' %>>
+                  <%= exec.Name %> (<%= exec.RoleName %>)
+                </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="notes" class="form-label">Discovery & Lead Notes</label>
+          <textarea class="form-control" id="notes" name="Notes" rows="3"><%= lead.Notes || '' %></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between border-top pt-3">
+          <button type="button" class="btn btn-outline-danger btn-sm" onclick="document.getElementById('deleteLeadForm').submit()">
+            <i class="bi bi-trash"></i> Delete Lead
+          </button>
+          <div class="d-flex gap-2">
+            <a href="/leads/<%= lead.LeadId %>" class="btn btn-crm-outline">Cancel</a>
+            <button type="submit" class="btn btn-crm-primary px-4">
+              <i class="bi bi-check2"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <form id="deleteLeadForm" action="/leads/<%= lead.LeadId %>/delete" method="POST" class="delete-confirm-form d-none" data-confirm="Are you sure you want to permanently delete this lead?">
+      </form>
+    </div>
+  </div>
+</div>
