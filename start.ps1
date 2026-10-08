@@ -1,5 +1,5 @@
 # AcxiomCRM Enterprise PowerShell Launcher
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 
 # Set working directory to script folder
 Set-Location $PSScriptRoot
@@ -44,17 +44,37 @@ if (-not (Test-Path "data/acxiomcrm.db")) {
     Write-Host ""
 }
 
+# 4. Check if already running on port 3000
+$portActive = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue
+if ($portActive) {
+    Write-Host "[INFO] AcxiomCRM is ALREADY RUNNING on http://localhost:3000" -ForegroundColor Green
+    Write-Host "[BROWSER] Launching default web browser..." -ForegroundColor Cyan
+    Start-Process "http://localhost:3000/login"
+    Write-Host ""
+    Write-Host "================================================================" -ForegroundColor Cyan
+    Write-Host "Application is live at: http://localhost:3000/login" -ForegroundColor White
+    Write-Host "================================================================" -ForegroundColor Cyan
+    Read-Host "Press Enter to exit launcher..."
+    exit 0
+}
+
 Write-Host "[SERVER] Starting AcxiomCRM on http://localhost:3000 ..." -ForegroundColor Green
 Write-Host "[BROWSER] Launching default web browser..." -ForegroundColor Cyan
 
-# Open browser asynchronously
+# Open browser asynchronously after 2 seconds
 Start-Job -ScriptBlock {
     Start-Sleep -Seconds 2
     Start-Process "http://localhost:3000/login"
 } | Out-Null
 
-Write-Host "[READY] Server is active. Press Ctrl+C to stop." -ForegroundColor White
+Write-Host "[READY] Server is active. Press Ctrl+C in this window to stop." -ForegroundColor White
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host ""
 
 node src/server.js
+
+Write-Host ""
+Write-Host "================================================================" -ForegroundColor Cyan
+Write-Host "[INFO] Server process has stopped." -ForegroundColor Yellow
+Write-Host "================================================================" -ForegroundColor Cyan
+Read-Host "Press Enter to exit..."

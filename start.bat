@@ -47,7 +47,24 @@ if not exist "data\acxiomcrm.db" (
     echo.
 )
 
-:: 4. Start the application and launch browser
+:: 4. Check if AcxiomCRM is already running on port 3000
+netstat -ano | findstr LISTENING | findstr :3000 >nul 2>nul
+if %ERRORLEVEL% EQU 0 (
+    echo [INFO] AcxiomCRM server is ALREADY ACTIVE on http://localhost:3000
+    echo [BROWSER] Launching web browser to http://localhost:3000/login ...
+    start "" explorer "http://localhost:3000/login"
+    echo.
+    echo ================================================================
+    echo AcxiomCRM is running. You can access it in your browser:
+    echo 🌐 Web UI: http://localhost:3000/login
+    echo.
+    echo Press any key when you want to exit this launcher window.
+    echo ================================================================
+    pause
+    exit /b 0
+)
+
+:: 5. Start the application and launch browser
 echo [SERVER] Starting AcxiomCRM on http://localhost:3000 ...
 echo [BROWSER] Launching default web browser...
 
@@ -59,8 +76,8 @@ echo ================================================================
 echo.
 node src\server.js
 
-if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo [ERROR] Server stopped unexpectedly with error code %ERRORLEVEL%.
-    pause
-)
+echo.
+echo ================================================================
+echo [INFO] Server process has stopped.
+echo ================================================================
+pause

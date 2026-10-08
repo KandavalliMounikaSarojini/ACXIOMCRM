@@ -106,6 +106,17 @@ if (process.env.NODE_ENV !== 'test') {
     console.log(`========================================================`);
   });
 
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`\n========================================================`);
+      console.log(`⚠️  [PORT IN USE] Port ${PORT} is already occupied by a running server.`);
+      console.log(`🌐 Application is already accessible at: http://localhost:${PORT}/login`);
+      console.log(`========================================================\n`);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+
   // Graceful shutdown
   process.on('SIGTERM', () => {
     console.log('SIGTERM signal received: closing HTTP server gracefully');
