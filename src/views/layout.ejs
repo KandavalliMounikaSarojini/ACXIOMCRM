@@ -159,27 +159,32 @@
         
         <!-- Flash Alerts -->
         <% if (flashSuccess) { %>
-          <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+          <div class="alert alert-success alert-dismissible fade show py-2 px-3 mb-2 text-sm shadow-sm" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
             <%= flashSuccess %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         <% } %>
 
         <% if (flashError) { %>
-          <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+          <div class="alert alert-danger alert-dismissible fade show py-2 px-3 mb-2 text-sm shadow-sm" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <%= flashError %>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close py-2" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
         <% } %>
 
         <%- body %>
       </main>
 
-      <!-- Footer -->
-      <footer class="text-center py-3 text-muted text-xs border-top bg-white" style="font-size: 0.8rem;">
-        AcxiomCRM &copy; 2026 Enterprise Edition &bull; All Rights Reserved.
+      <!-- Sleek Compact Enterprise Status Bar -->
+      <footer class="app-footer">
+        <div>AcxiomCRM &copy; 2026 Enterprise Edition &bull; RBAC Level: <span class="fw-semibold text-dark"><%= currentUser.roleName %></span></div>
+        <div class="d-none d-md-flex align-items-center gap-3">
+          <span><i class="bi bi-circle-fill text-success me-1" style="font-size: 0.5rem;"></i>API Gateway: <strong>Online</strong></span>
+          <span>LeadScore 360™ &amp; DealIQ™: <strong>Active</strong></span>
+          <a href="/api-docs" class="text-decoration-none text-muted"><i class="bi bi-code-slash me-1"></i>Swagger</a>
+        </div>
       </footer>
     </div>
   </div>
